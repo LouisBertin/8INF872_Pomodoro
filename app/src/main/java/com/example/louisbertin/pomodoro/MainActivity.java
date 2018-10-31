@@ -1,5 +1,7 @@
 package com.example.louisbertin.pomodoro;
 
+import android.content.Context;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -13,6 +15,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -20,6 +24,9 @@ public class MainActivity extends AppCompatActivity
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
+    private AudioManager audioManager;
+    private Switch soundSwitch;
+    private int prevSoundState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +56,16 @@ public class MainActivity extends AppCompatActivity
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+
+        audioManager=(AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        soundSwitch=(Switch)findViewById(R.id.silentSwitch);
+        /*soundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!isChecked)prevSoundState=audioManager.getRingerMode();
+                soundMode(isChecked);
+            }
+        });*/
     }
 
     @Override
@@ -109,5 +126,10 @@ public class MainActivity extends AppCompatActivity
             // Show 3 total pages.
             return 3;
         }
+    }
+
+    public void soundMode(boolean isChecked){
+        if(isChecked) audioManager.setRingerMode(0);
+        else audioManager.setRingerMode(prevSoundState);
     }
 }
