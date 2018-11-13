@@ -11,7 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
+
+import static android.content.Context.*;
+import static android.support.v4.content.ContextCompat.getSystemService;
+import static android.support.v4.content.ContextCompat.getSystemServiceName;
 
 public class Tab1 extends Fragment{
 
@@ -19,16 +25,28 @@ public class Tab1 extends Fragment{
     private CountDownTimer timer;
     private boolean running;
     private long timeToCount=1500000;
+    private Switch soundSwitch;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.tab1, container, false);
+
         bTimer=(Button) rootView.findViewById(R.id.timer_button);
         bTimer.setOnClickListener(timeClick);
         updateTimer((int)timeToCount/1000);
         running=false;
-        return rootView;
+
+        soundSwitch=(Switch)rootView.findViewById(R.id.silentSwitch);
+        soundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) ((MainActivity)getActivity()).setSoundOff();
+                else ((MainActivity)getActivity()).setSoundOn();
+                Log.d("pwt","value changed"+soundSwitch.isChecked());
+            }
+        });        return rootView;
     }
 
     private View.OnClickListener timeClick=new View.OnClickListener() {
