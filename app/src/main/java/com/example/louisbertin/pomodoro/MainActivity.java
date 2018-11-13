@@ -1,6 +1,7 @@
 package com.example.louisbertin.pomodoro;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
         audioManager=(AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        soundSwitch=(Switch)findViewById(R.id.silentSwitch);
+        //soundSwitch=(Switch)findViewById(R.id.silentSwitch);
         /*soundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -91,7 +92,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_account) {
 
         } else if (id == R.id.nav_settings) {
-
+            Intent intent=new Intent(this,SettingsActivity.class);
+            startActivity(intent);
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
