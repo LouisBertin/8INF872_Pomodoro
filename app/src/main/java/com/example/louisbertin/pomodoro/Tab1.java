@@ -2,9 +2,11 @@ package com.example.louisbertin.pomodoro;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -14,15 +16,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.Toast;
 
 public class Tab1 extends Fragment {
 
     private final int ONE_SECOND = 1000;
+    private final int SECONDS_IN_MINUTE = 60;
 
     private Button bTimer;
     private CountDownTimer timer;
     private boolean running;
-    private long timeToCount = 1500000;
+    private long timeToCount;
     private Switch soundSwitch;
 
 
@@ -38,6 +42,17 @@ public class Tab1 extends Fragment {
 
         if (running) startTimer();
         else bTimer.setText(R.string.timer_start);
+
+        PreferenceManager.setDefaultValues(getContext(), R.xml.pref_main, false);
+        /*
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String test = sharedPreferences.getString("key_time_pom", "hi");
+
+        long timeSettings = getTimeFromSettings();
+
+        System.out.println("test: " + timeSettings + "s");
+        Toast.makeText(getContext(), test, Toast.LENGTH_SHORT).show();
+        */
 
         return rootView;
     }
@@ -55,6 +70,15 @@ public class Tab1 extends Fragment {
         }
     }
 
+    private long getTimeFromSettings() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        long time = Long.parseLong(sharedPreferences.getString("key_time_pom", "-1"));
+
+        time = 300000 + 3 * time * 100000;
+
+        return time;
+    }
+
     private View.OnClickListener timeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -64,6 +88,9 @@ public class Tab1 extends Fragment {
     };
 
     public void setTimer(View rootView) {
+        timeToCount = getTimeFromSettings();
+        System.out.println(timeToCount);
+
         timer = new CountDownTimer(timeToCount, ONE_SECOND) {
 
             @Override

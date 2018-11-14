@@ -15,6 +15,7 @@
         <item>4</item>
     </string-array>
 
+    <string name="pref_title_pomodoro_time_entries">Length</string>
     <string-array name="pref_pomodoro_time_entries">
         <item>5:00</item>
         <item>10:00</item>
@@ -29,6 +30,7 @@
         <item>55:00</item>
         <item>60:00</item>
     </string-array>
+
     <string-array name="pref_pomodoro_time_values">
         <item>0</item>
         <item>1</item>
