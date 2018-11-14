@@ -14,6 +14,7 @@
     <string name="info">Information</string>
     <string name="account">Account</string>
     <string name="timer_button">0:00</string>
+    <string name="timer_start">Start</string>
     <string name="switch_legend">Silent Mode</string>
     <string name="title_activity_settings">Settings</string>
 

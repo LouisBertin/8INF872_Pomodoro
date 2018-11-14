@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Timer cancel -->
+    <string name="title_cancel">Cancel the current cycle?</string>
+    <string name="message_cancel">You will have to start all over again. :(</string>
+    <string name="button_yes">Yes</string>
+    <string name="button_no">No</string>
+</resources>

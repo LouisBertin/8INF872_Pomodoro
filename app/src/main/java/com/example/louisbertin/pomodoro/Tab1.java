@@ -1,5 +1,7 @@
 package com.example.louisbertin.pomodoro;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -25,7 +27,7 @@ public class Tab1 extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.tab1, container, false);
 
@@ -35,6 +37,7 @@ public class Tab1 extends Fragment {
         setSoundSwitch(rootView);
 
         if (running) startTimer();
+        else bTimer.setText(R.string.timer_start);
 
         return rootView;
     }
@@ -101,9 +104,24 @@ public class Tab1 extends Fragment {
     }
 
     public void stopTimer() {
-        running = false;
-        timer.cancel();
-        updateTimer((int) timeToCount / ONE_SECOND);
+        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        alert.setTitle(R.string.title_cancel)
+                .setMessage(R.string.message_cancel)
+                .setPositiveButton(R.string.button_yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        running = false;
+                        timer.cancel();
+                        bTimer.setText(R.string.timer_start);
+                    }
+                })
+                .setNegativeButton(R.string.button_no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .create();
+        alert.show();
     }
 
     private void setSoundSwitch(View rootView) {
