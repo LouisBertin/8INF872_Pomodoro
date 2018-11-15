@@ -16,67 +16,84 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
-import android.widget.Toast;
+
+import java.util.Objects;
 
 public class Tab1 extends Fragment {
 
     private final int ONE_SECOND = 1000;
     private final int SECONDS_IN_MINUTE = 60;
 
+    private View rootView;
+
     private Button bTimer;
     private CountDownTimer timer;
     private boolean running;
-    private long timeToCount;
+    private long initialTime;
+    private long currentTime;
     private Switch soundSwitch;
 
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.tab1, container, false);
+        rootView = inflater.inflate(R.layout.tab1, container, false);
 
         getSavedInstance(savedInstanceState);
 
-        setTimer(rootView);
-        setSoundSwitch(rootView);
+        setSoundSwitch();
 
-        if (running) startTimer();
-        else bTimer.setText(R.string.timer_start);
+        checkRunningState();
 
         PreferenceManager.setDefaultValues(getContext(), R.xml.pref_main, false);
-        /*
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String test = sharedPreferences.getString("key_time_pom", "hi");
-
-        long timeSettings = getTimeFromSettings();
-
-        System.out.println("test: " + timeSettings + "s");
-        Toast.makeText(getContext(), test, Toast.LENGTH_SHORT).show();
-        */
 
         return rootView;
     }
 
+    /*
+    * On récupère les changements faits dans SettingsActivity ici.
+    * */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (running) {
+            initialTime = getTimeFromSettings();
+        } else {
+            setTimer();
+            bTimer.setText(R.string.timer_start);
+        }
+    }
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putLong("time", timeToCount);
+        outState.putLong("time", currentTime);
         outState.putBoolean("running", running);
     }
 
     private void getSavedInstance(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            timeToCount = savedInstanceState.getLong("time");
+            currentTime = savedInstanceState.getLong("time");
             running = savedInstanceState.getBoolean("running");
         }
     }
 
+    private void checkRunningState() {
+        if (running) {
+            startTimer();
+        } else {
+            setTimer();
+            bTimer.setText(R.string.timer_start);
+        }
+    }
+
+    /*
+    * Retourne le temps paramétré dans Settings en millisecondes.
+    * */
     private long getTimeFromSettings() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        long time = Long.parseLong(sharedPreferences.getString("key_time_pom", "-1"));
-
-        time = 300000 + 3 * time * 100000;
-
-        return time;
+        long index = Long.parseLong(sharedPreferences.getString("key_time_pom", "-1"));
+        return 300000 + 300000 * index;
     }
 
     private View.OnClickListener timeClick = new View.OnClickListener() {
@@ -87,15 +104,23 @@ public class Tab1 extends Fragment {
         }
     };
 
-    public void setTimer(View rootView) {
-        timeToCount = getTimeFromSettings();
-        System.out.println(timeToCount);
+    public void setTimer() {
+        initialTime = getTimeFromSettings();
+        currentTime = initialTime;
 
-        timer = new CountDownTimer(timeToCount, ONE_SECOND) {
+        setNewTimer();
+
+        bTimer = rootView.findViewById(R.id.timer_button);
+        bTimer.setOnClickListener(timeClick);
+        updateTimer((int) currentTime / ONE_SECOND);
+    }
+
+    private void setNewTimer() {
+        timer = new CountDownTimer(initialTime, ONE_SECOND) {
 
             @Override
             public void onTick(long l) {
-                timeToCount -= ONE_SECOND;
+                currentTime -= ONE_SECOND;
                 updateTimer((int) l / ONE_SECOND);
             }
 
@@ -106,10 +131,6 @@ public class Tab1 extends Fragment {
                 bTimer.setText("0:00");
             }
         };
-
-        bTimer = rootView.findViewById(R.id.timer_button);
-        bTimer.setOnClickListener(timeClick);
-        updateTimer((int) timeToCount / ONE_SECOND);
     }
 
     public void updateTimer(int secondsLeft) {
@@ -139,6 +160,7 @@ public class Tab1 extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         running = false;
                         timer.cancel();
+                        setNewTimer();
                         bTimer.setText(R.string.timer_start);
                     }
                 })
@@ -151,20 +173,20 @@ public class Tab1 extends Fragment {
         alert.show();
     }
 
-    private void setSoundSwitch(View rootView) {
+    private void setSoundSwitch() {
         soundSwitch = rootView.findViewById(R.id.silentSwitch);
         soundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) ((MainActivity) getActivity()).setSoundOff();
-                else ((MainActivity) getActivity()).setSoundOn();
+                if (isChecked) ((MainActivity) Objects.requireNonNull(getActivity())).setSoundOff();
+                else ((MainActivity) Objects.requireNonNull(getActivity())).setSoundOn();
                 Log.d("pwt", "value changed" + soundSwitch.isChecked());
             }
         });
     }
 
-    public void setTimeToCount(long timeToCount) {
-        this.timeToCount = timeToCount;
+    public void setCurrentTime(long currentTime) {
+        this.currentTime = currentTime;
     }
 }
 
