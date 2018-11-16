@@ -12,6 +12,7 @@
     <string name="settings">Settings</string>
     <string name="stats">Statistics</string>
     <string name="info">Information</string>
+    <string name="about">About</string>
     <string name="account">Account</string>
     <string name="timer_button">0:00</string>
     <string name="timer_start">Start</string>
@@ -53,4 +54,21 @@
 
     <string name="title_version">Version</string>
     <string name="app_version">0.3</string>
+
+    <!-- About Activity -->
+    <string name="about_logo_content_description">logo</string>
+    <string name="about_caml">What is camL about?</string>
+    <string name="about_caml_text">What if you could become more productive by following small, simple rules? That is what camL is all about. By combining the Non-Zero Days and the pomodoro rules, we believe that you can achieve your goals and dreams in a more effective way.</string>
+    <string name="about_non_zero_day">What is a Non-Zero Day?</string>
+    <string name="about_non_zero_day_text">
+        A Non-Zero Day is a productivity principle which follows a few rules. Such a day is called as such when you do something that you deem productive during the day, whether it is making your bed, doing your homework or working on a project you are passionate about.\n\n
+        Four rules define this principle:\n
+        1. There are no more zero days.\n
+        2. Be grateful to the three you.\n
+        3. Forgive yourself.\n
+        4. Exercise and books.
+    </string>
+    <string name="about_pomodoro">What is a pomodoro?</string>
+    <string name="about_pomodoro_text">A pomodoro is a method used for breaking work into multiple cycles of shorter work. \n// TODO Text here</string>
+    <!-- \About Activity -->
 </resources>
