@@ -1,5 +1,6 @@
 package com.example.louisbertin.pomodoro;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -18,8 +19,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Objects;
 
@@ -30,16 +29,13 @@ public class Tab1 extends Fragment {
     private View rootView;
 
     // Timer button
-    private Button bTimer;
-    private CountDownTimer timer;
-
-    // Time display
-    private TextView timeText;
-    private TextView timeDisplay;
+    @SuppressLint("StaticFieldLeak")
+    private static Button bTimer;
+    private static CountDownTimer timer;
 
     private boolean running;
     private long initialTime;
-    private long currentTime;
+    private static long currentTime;
     private Switch soundSwitch;
     private Uri alarmValue;
     private MediaPlayer mediaPlayer;
@@ -50,9 +46,7 @@ public class Tab1 extends Fragment {
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.tab1, container, false);
 
-        setSoundSwitch();
-
-        checkRunningState();
+        // setSoundSwitch();
 
         setRingtone();
 
@@ -72,6 +66,7 @@ public class Tab1 extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        System.out.println("saving bundle");
         outState.putLong("time", currentTime);
         outState.putBoolean("running", running);
     }
@@ -79,6 +74,7 @@ public class Tab1 extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        System.out.println("created: " + savedInstanceState);
 
         if (savedInstanceState != null) {
             currentTime = savedInstanceState.getLong("time");
@@ -87,19 +83,11 @@ public class Tab1 extends Fragment {
     }
 
     private void checkRunningState() {
-        if (running) {
-            initialTime = getTimeFromSettings();
+        setTimer();
 
-            setTimer();
-            setDisplayTime();
-        } else {
-            setTimer();
+        if (!running) {
             setNewTimer(initialTime);
-            setDisplayTime();
-
             bTimer.setText(R.string.timer_start);
-            timeText.setVisibility(View.VISIBLE);
-            timeDisplay.setVisibility(View.VISIBLE);
         }
     }
 
@@ -125,14 +113,8 @@ public class Tab1 extends Fragment {
 
         bTimer = rootView.findViewById(R.id.timer_button);
         bTimer.setOnClickListener(timeClick);
+
         updateTimer((int) currentTime / ONE_SECOND);
-    }
-
-    private void setDisplayTime() {
-        timeText = rootView.findViewById(R.id.tab1_time_text);
-
-        timeDisplay = rootView.findViewById(R.id.tab1_time);
-        timeDisplay.setText(getTime((int) initialTime / 1000));
     }
 
     private void setNewTimer(long time) {
@@ -141,6 +123,7 @@ public class Tab1 extends Fragment {
 
             @Override
             public void onTick(long l) {
+                System.out.println("tick");
                 currentTime -= ONE_SECOND;
                 updateTimer((int) l / ONE_SECOND);
             }
@@ -161,9 +144,6 @@ public class Tab1 extends Fragment {
     public void startTimer() {
         running = true;
         timer.start();
-
-        timeText.setVisibility(View.INVISIBLE);
-        timeDisplay.setVisibility(View.INVISIBLE);
     }
 
     public void stopTimer() {
@@ -178,8 +158,6 @@ public class Tab1 extends Fragment {
                         setNewTimer(initialTime);
 
                         bTimer.setText(R.string.timer_start);
-                        timeText.setVisibility(View.VISIBLE);
-                        timeDisplay.setVisibility(View.VISIBLE);
                     }
                 })
                 .setNegativeButton(R.string.button_no, new DialogInterface.OnClickListener() {
@@ -192,7 +170,7 @@ public class Tab1 extends Fragment {
     }
 
     private void setSoundSwitch() {
-        soundSwitch = rootView.findViewById(R.id.silentSwitch);
+        // soundSwitch = rootView.findViewById(R.id.silentSwitch);
         soundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -201,10 +179,6 @@ public class Tab1 extends Fragment {
                 Log.d("pwt", "value changed" + soundSwitch.isChecked());
             }
         });
-    }
-
-    public void setCurrentTime(long currentTime) {
-        this.currentTime = currentTime;
     }
 
     private void setRingtone() {
