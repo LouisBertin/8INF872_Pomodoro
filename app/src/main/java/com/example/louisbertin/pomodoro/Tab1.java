@@ -216,7 +216,7 @@ public class Tab1 extends Fragment {
     public void stopRingtone() {
         AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
         alert.setTitle(R.string.title_stop)
-                .setMessage(R.string.message_cancel)
+                .setMessage(R.string.message_stop)
                 .setPositiveButton(R.string.button_stop, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
