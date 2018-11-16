@@ -5,4 +5,9 @@
     <string name="message_cancel">You will have to start all over again. :(</string>
     <string name="button_yes">Yes</string>
     <string name="button_no">No</string>
+
+    <!-- Ringtone Stop -->
+    <string name="title_stop">Timer done</string>
+    <string name="message_stop">Click to stop the ringtone</string>
+    <string name="button_stop">Stop</string>
 </resources>

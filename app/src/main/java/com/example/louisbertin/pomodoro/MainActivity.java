@@ -123,13 +123,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /*public void soundMode(boolean isChecked){
-        if(isChecked) audioManager.setRingerMode(0);
-        else audioManager.setRingerMode(prevSoundState);
-    }*/
-
     public void setSoundOff() {
-        //prevSoundState=audioManager.getRingerMode();
         audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
     }
 

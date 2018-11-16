@@ -9,12 +9,14 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
+import android.util.Log;
 import android.view.MenuItem;
+
+import com.kizitonwose.colorpreference.ColorPreference;
 
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
     private static final String TAG = "pwt";
-    //private SeekBarPreference seekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +99,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     preference.setSummary(name);
                 }
 
-            }
-            else {
+            }else {
                 preference.setSummary(stringValue);
             }
             return true;

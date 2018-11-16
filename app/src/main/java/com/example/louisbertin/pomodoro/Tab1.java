@@ -4,9 +4,13 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -32,6 +36,8 @@ public class Tab1 extends Fragment {
     private long initialTime;
     private long currentTime;
     private Switch soundSwitch;
+    private Uri alarmValue;
+    private MediaPlayer mediaPlayer;
 
 
     @Override
@@ -44,6 +50,10 @@ public class Tab1 extends Fragment {
         setSoundSwitch();
 
         checkRunningState();
+
+        setRingtone();
+
+        mediaPlayer= MediaPlayer.create(getContext(), alarmValue);
 
         PreferenceManager.setDefaultValues(getContext(), R.xml.pref_main, false);
 
@@ -126,9 +136,9 @@ public class Tab1 extends Fragment {
 
             @Override
             public void onFinish() {
-                MediaPlayer mediaPlayer = MediaPlayer.create(getContext(), R.raw.airhorn);
                 mediaPlayer.start();
                 bTimer.setText("0:00");
+                stopRingtone();
             }
         };
     }
@@ -154,7 +164,7 @@ public class Tab1 extends Fragment {
     public void stopTimer() {
         AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
         alert.setTitle(R.string.title_cancel)
-                .setMessage(R.string.message_cancel)
+                .setMessage(R.string.message_stop)
                 .setPositiveButton(R.string.button_yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -180,13 +190,35 @@ public class Tab1 extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) ((MainActivity) Objects.requireNonNull(getActivity())).setSoundOff();
                 else ((MainActivity) Objects.requireNonNull(getActivity())).setSoundOn();
-                Log.d("pwt", "value changed" + soundSwitch.isChecked());
             }
         });
     }
 
     public void setCurrentTime(long currentTime) {
         this.currentTime = currentTime;
+    }
+
+    private void setRingtone(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String alarmString = sharedPreferences.getString("key_pom_end_ringtone","DEFAULT_RINGTONE");
+        alarmValue = Uri.parse(alarmString);
+    }
+
+    public void stopRingtone(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        alert.setTitle(R.string.title_stop)
+                .setMessage(R.string.message_cancel)
+                .setPositiveButton(R.string.button_stop, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mediaPlayer.stop();
+                        running = false;
+                        setNewTimer();
+                        bTimer.setText(R.string.timer_start);
+                    }
+                })
+                .create();
+        alert.show();
     }
 }
 
