@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,22 +17,28 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import java.util.Objects;
 
 public class Tab1 extends Fragment {
 
     private final int ONE_SECOND = 1000;
-    private final int SECONDS_IN_MINUTE = 60;
 
     private View rootView;
+    private Switch soundSwitch;
 
+    // Timer button
     private Button bTimer;
     private CountDownTimer timer;
+
+    // Time display
+    private TextView timeText;
+    private TextView timeDisplay;
+
     private boolean running;
     private long initialTime;
     private long currentTime;
-    private Switch soundSwitch;
 
 
     @Override
@@ -39,30 +46,18 @@ public class Tab1 extends Fragment {
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.tab1, container, false);
 
-        getSavedInstance(savedInstanceState);
-
         setSoundSwitch();
-
-        checkRunningState();
 
         PreferenceManager.setDefaultValues(getContext(), R.xml.pref_main, false);
 
         return rootView;
     }
 
-    /*
-    * On récupère les changements faits dans SettingsActivity ici.
-    * */
     @Override
     public void onResume() {
         super.onResume();
 
-        if (running) {
-            initialTime = getTimeFromSettings();
-        } else {
-            setTimer();
-            bTimer.setText(R.string.timer_start);
-        }
+        checkRunningState();
     }
 
     @Override
@@ -71,7 +66,10 @@ public class Tab1 extends Fragment {
         outState.putBoolean("running", running);
     }
 
-    private void getSavedInstance(Bundle savedInstanceState) {
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         if (savedInstanceState != null) {
             currentTime = savedInstanceState.getLong("time");
             running = savedInstanceState.getBoolean("running");
@@ -80,10 +78,20 @@ public class Tab1 extends Fragment {
 
     private void checkRunningState() {
         if (running) {
-            startTimer();
+            initialTime = getTimeFromSettings();
+
+            setTimer();
+            setDisplayTime();
+
+            // startTimer();
         } else {
             setTimer();
+            setNewTimer(initialTime);
+            setDisplayTime();
+
             bTimer.setText(R.string.timer_start);
+            timeText.setVisibility(View.VISIBLE);
+            timeDisplay.setVisibility(View.VISIBLE);
         }
     }
 
@@ -106,17 +114,22 @@ public class Tab1 extends Fragment {
 
     public void setTimer() {
         initialTime = getTimeFromSettings();
-        currentTime = initialTime;
-
-        setNewTimer();
 
         bTimer = rootView.findViewById(R.id.timer_button);
         bTimer.setOnClickListener(timeClick);
         updateTimer((int) currentTime / ONE_SECOND);
     }
 
-    private void setNewTimer() {
-        timer = new CountDownTimer(initialTime, ONE_SECOND) {
+    private void setDisplayTime() {
+        timeText = rootView.findViewById(R.id.tab1_time_text);
+
+        timeDisplay = rootView.findViewById(R.id.tab1_time);
+        timeDisplay.setText(getTime((int) initialTime / 1000));
+    }
+
+    private void setNewTimer(long time) {
+        currentTime = time;
+        timer = new CountDownTimer(time, ONE_SECOND) {
 
             @Override
             public void onTick(long l) {
@@ -134,21 +147,15 @@ public class Tab1 extends Fragment {
     }
 
     public void updateTimer(int secondsLeft) {
-        int minutes = secondsLeft / 60;
-        int seconds = secondsLeft - (minutes * 60);
-
-        String secondString = Integer.toString(seconds);
-
-        if (seconds < 10) {
-            secondString = "0" + secondString;
-        }
-
-        bTimer.setText(String.format("%s:%s", Integer.toString(minutes), secondString));
+        bTimer.setText(getTime(secondsLeft));
     }
 
     public void startTimer() {
         running = true;
         timer.start();
+
+        timeText.setVisibility(View.INVISIBLE);
+        timeDisplay.setVisibility(View.INVISIBLE);
     }
 
     public void stopTimer() {
@@ -160,8 +167,11 @@ public class Tab1 extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         running = false;
                         timer.cancel();
-                        setNewTimer();
+                        setNewTimer(initialTime);
+
                         bTimer.setText(R.string.timer_start);
+                        timeText.setVisibility(View.VISIBLE);
+                        timeDisplay.setVisibility(View.VISIBLE);
                     }
                 })
                 .setNegativeButton(R.string.button_no, new DialogInterface.OnClickListener() {
@@ -187,6 +197,19 @@ public class Tab1 extends Fragment {
 
     public void setCurrentTime(long currentTime) {
         this.currentTime = currentTime;
+    }
+
+    private String getTime(int time) {
+        int minutes = time / 60;
+        int seconds = time - (minutes * 60);
+
+        String secondString = Integer.toString(seconds);
+
+        if (seconds < 10) {
+            secondString = "0" + secondString;
+        }
+
+        return String.format("%s:%s", Integer.toString(minutes), secondString);
     }
 }
 
