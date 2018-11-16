@@ -5,4 +5,5 @@
     <color name="colorAccent">#d81b60</color>
     <color name="colorWhite">#ffffff</color>
     <color name="backgroundMain">#80000000</color>
+    <color name="colorUnselectedTab">#34000000</color>
 </resources>
