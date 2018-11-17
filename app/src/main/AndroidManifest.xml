@@ -31,6 +31,7 @@
         <activity
             android:name=".AboutActivity"
             android:label="About"
+            android:theme="@style/TransparentActionBarTheme"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
