@@ -6,4 +6,5 @@
     <color name="colorWhite">#ffffff</color>
     <color name="backgroundMain">#80000000</color>
     <color name="colorUnselectedTab">#34000000</color>
+    <color name="testColor">#6588f6</color>
 </resources>

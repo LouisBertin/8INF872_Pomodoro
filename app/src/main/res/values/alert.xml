@@ -7,7 +7,7 @@
     <string name="button_no">No</string>
 
     <!-- Ringtone Stop -->
-    <string name="title_stop">Timer done</string>
-    <string name="message_stop">Click to stop the ringtone</string>
-    <string name="button_stop">Stop</string>
+    <string name="title_stop">You just finished a cycle!</string>
+    <string name="message_stop">You can now take a break.</string>
+    <string name="button_stop">Okay</string>
 </resources>

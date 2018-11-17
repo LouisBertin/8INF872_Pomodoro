@@ -16,21 +16,33 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import java.util.Objects;
 
 public class Tab1 extends Fragment {
 
+    private enum State {
+        Running,
+        Stopped
+    }
+
     private final int ONE_SECOND = 1000;
 
     private View rootView;
 
-    // Timer button
+    // Current task
+    private TextView currentTaskText;
+    private String currentTask = "“Do your homework!”";
+
+    private ImageView timerStartImage;
     @SuppressLint("StaticFieldLeak")
-    private static Button bTimer;
+    private static TextView timerMinutesText;
+    @SuppressLint("StaticFieldLeak")
+    private static TextView timerSecondsText;
     private static CountDownTimer timer;
 
     private boolean running;
@@ -61,6 +73,9 @@ public class Tab1 extends Fragment {
     public void onResume() {
         super.onResume();
 
+        setTimer();
+        setCurrentTask();
+
         checkRunningState();
     }
 
@@ -83,11 +98,11 @@ public class Tab1 extends Fragment {
     }
 
     private void checkRunningState() {
-        setTimer();
-
         if (!running) {
             setNewTimer(initialTime);
-            bTimer.setText(R.string.timer_start);
+            updateVisibility(State.Stopped);
+        } else {
+            currentTaskText.setText(currentTask);
         }
     }
 
@@ -108,13 +123,19 @@ public class Tab1 extends Fragment {
         }
     };
 
+    private void setCurrentTask() {
+        currentTaskText = rootView.findViewById(R.id.timer_current_task);
+    }
+
     public void setTimer() {
         initialTime = getTimeFromSettings();
 
-        bTimer = rootView.findViewById(R.id.timer_button);
-        bTimer.setOnClickListener(timeClick);
+        timerStartImage = rootView.findViewById(R.id.timer_start);
+        timerMinutesText = rootView.findViewById(R.id.timer_minutes);
+        timerSecondsText = rootView.findViewById(R.id.timer_seconds);
+        rootView.findViewById(R.id.timer_button).setOnClickListener(timeClick);
 
-        updateTimer((int) currentTime / ONE_SECOND);
+        updateTimerText((int) currentTime / ONE_SECOND);
     }
 
     private void setNewTimer(long time) {
@@ -123,26 +144,24 @@ public class Tab1 extends Fragment {
 
             @Override
             public void onTick(long l) {
-                System.out.println("tick");
                 currentTime -= ONE_SECOND;
-                updateTimer((int) l / ONE_SECOND);
+                updateTimerText((int) l / ONE_SECOND);
             }
 
             @Override
             public void onFinish() {
                 mediaPlayer.start();
-                bTimer.setText("0:00");
                 stopRingtone();
             }
         };
     }
 
-    public void updateTimer(int secondsLeft) {
-        bTimer.setText(getTime(secondsLeft));
-    }
-
     public void startTimer() {
         running = true;
+
+        currentTaskText.setText(currentTask);
+        updateVisibility(State.Running);
+
         timer.start();
     }
 
@@ -154,10 +173,9 @@ public class Tab1 extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         running = false;
+                        updateVisibility(State.Stopped);
                         timer.cancel();
                         setNewTimer(initialTime);
-
-                        bTimer.setText(R.string.timer_start);
                     }
                 })
                 .setNegativeButton(R.string.button_no, new DialogInterface.OnClickListener() {
@@ -195,26 +213,38 @@ public class Tab1 extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mediaPlayer.stop();
+                        updateVisibility(State.Stopped);
                         running = false;
                         setNewTimer(initialTime);
-                        bTimer.setText(R.string.timer_start);
                     }
                 })
                 .create();
         alert.show();
     }
 
-    private String getTime(int time) {
+    private void updateTimerText(int time) {
         int minutes = time / 60;
         int seconds = time - (minutes * 60);
 
-        String secondString = Integer.toString(seconds);
+        timerMinutesText.setText((minutes < 10) ? "0" + Integer.toString(minutes) : Integer.toString(minutes));
+        timerSecondsText.setText((seconds < 10) ? "0" + Integer.toString(seconds) : Integer.toString(seconds));
+    }
 
-        if (seconds < 10) {
-            secondString = "0" + secondString;
+    private void updateVisibility(State state) {
+        switch (state) {
+            case Running:
+                currentTaskText.setVisibility(View.VISIBLE);
+                timerStartImage.setVisibility(View.INVISIBLE);
+                timerMinutesText.setVisibility(View.VISIBLE);
+                timerSecondsText.setVisibility(View.VISIBLE);
+                break;
+            case Stopped:
+                currentTaskText.setVisibility(View.INVISIBLE);
+                timerStartImage.setVisibility(View.VISIBLE);
+                timerMinutesText.setVisibility(View.INVISIBLE);
+                timerSecondsText.setVisibility(View.INVISIBLE);
+                break;
         }
-
-        return String.format("%s:%s", Integer.toString(minutes), secondString);
     }
 }
 

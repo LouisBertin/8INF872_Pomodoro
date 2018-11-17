@@ -1,4 +1,5 @@
 <resources>
+
     <string name="app_name">camL</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -14,10 +15,14 @@
     <string name="info">Information</string>
     <string name="about">About</string>
     <string name="account">Account</string>
-    <string name="timer_button">0:00</string>
     <string name="timer_start">Start</string>
     <string name="switch_legend">Silent Mode</string>
     <string name="title_activity_settings">Settings</string>
+
+    <!-- Tab 1 -->
+    <string name="timer_button">0:00</string>
+    <string name="timer_task">“Current task”</string>
+    <!-- \Tab 1 -->
 
     <string name="pref_header_theme">Theme</string>
     <string name="title_color">Theme Color</string>
@@ -71,4 +76,5 @@
     <string name="about_pomodoro">What is a pomodoro?</string>
     <string name="about_pomodoro_text">A pomodoro is a method used for breaking work into multiple cycles of shorter work. \n// TODO Text here</string>
     <!-- \About Activity -->
+
 </resources>

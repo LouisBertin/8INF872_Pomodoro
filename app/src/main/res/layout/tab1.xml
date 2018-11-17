@@ -3,50 +3,73 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/constraintLayout"
-    android:background="@drawable/bg_gradient"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity$PlaceholderFragment">
+    android:background="@drawable/bg_gradient">
 
-    <Button
+    <TextView
+        android:id="@+id/timer_current_task"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="64dp"
+        android:text="@string/timer_task"
+        android:textAlignment="center"
+        android:textColor="@color/colorWhite"
+        android:textSize="18sp"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/timer_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.50"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <RelativeLayout
         android:id="@+id/timer_button"
         android:layout_width="250dp"
         android:layout_height="250dp"
-        android:layout_marginBottom="8dp"
         android:background="@drawable/button_bg_round"
-        android:padding="15dp"
-        android:text="@string/timer_button"
-        android:textColor="@color/colorWhite"
-        android:textSize="40sp"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="250dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="64dp"
-        app:cardBackgroundColor="@color/colorPrimary"
-        app:cardCornerRadius="15dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timer_button">
+        <ImageView
+            android:id="@+id/timer_start"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:layout_centerInParent="true"
+            android:visibility="invisible"
+            app:srcCompat="@drawable/ic_start" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/timer_minutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:paddingEnd="48dp"
+            android:text="15"
+            android:textColor="@color/colorWhite"
+            android:textSize="64sp"
+            android:visibility="visible"
+            tools:ignore="RtlSymmetry" />
 
-            <TextView
-                android:id="@+id/tab1_start_short_cycle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="Short cycle (5 min.)"
-                android:textColor="@color/colorWhite"
-                android:textSize="16sp" />
-        </RelativeLayout>
-    </android.support.v7.widget.CardView>
+        <TextView
+            android:id="@+id/timer_seconds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:paddingStart="72dp"
+            android:paddingBottom="32dp"
+            android:text="35"
+            android:textColor="@color/colorWhite"
+            android:textSize="36sp"
+            android:visibility="visible"
+            tools:ignore="RtlSymmetry" />
+
+    </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
