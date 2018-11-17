@@ -56,8 +56,6 @@ public class Tab1 extends Fragment {
 
         setRingtone();
 
-        mediaPlayer = MediaPlayer.create(getContext(), alarmValue);
-
         PreferenceManager.setDefaultValues(getContext(), R.xml.pref_main, false);
 
         return rootView;
@@ -147,6 +145,7 @@ public class Tab1 extends Fragment {
 
             @Override
             public void onFinish() {
+                ((MainActivity) Objects.requireNonNull(getActivity())).setSoundOn();
                 mediaPlayer.start();
                 bTimer.setText("0:00");
                 stopRingtone();
@@ -164,6 +163,7 @@ public class Tab1 extends Fragment {
 
         timeText.setVisibility(View.INVISIBLE);
         timeDisplay.setVisibility(View.INVISIBLE);
+        soundSwitch.setVisibility(View.INVISIBLE);
     }
 
     public void stopTimer() {
@@ -180,6 +180,7 @@ public class Tab1 extends Fragment {
                         bTimer.setText(R.string.timer_start);
                         timeText.setVisibility(View.VISIBLE);
                         timeDisplay.setVisibility(View.VISIBLE);
+                        soundSwitch.setVisibility(View.VISIBLE);
                     }
                 })
                 .setNegativeButton(R.string.button_no, new DialogInterface.OnClickListener() {
@@ -209,8 +210,9 @@ public class Tab1 extends Fragment {
 
     private void setRingtone() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String alarmString = sharedPreferences.getString("key_pom_end_ringtone", "DEFAULT_RINGTONE");
+        String alarmString = sharedPreferences.getString("key_pom_end_ringtone", "-1");
         alarmValue = Uri.parse(alarmString);
+        mediaPlayer = MediaPlayer.create(getContext(), alarmValue);
     }
 
     public void stopRingtone() {
