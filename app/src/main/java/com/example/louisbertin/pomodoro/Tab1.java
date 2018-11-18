@@ -62,8 +62,6 @@ public class Tab1 extends Fragment {
 
         setRingtone();
 
-        mediaPlayer = MediaPlayer.create(getContext(), alarmValue);
-
         PreferenceManager.setDefaultValues(getContext(), R.xml.pref_main, false);
 
         return rootView;
@@ -81,7 +79,6 @@ public class Tab1 extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        System.out.println("saving bundle");
         outState.putLong("time", currentTime);
         outState.putBoolean("running", running);
     }
@@ -89,7 +86,6 @@ public class Tab1 extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        System.out.println("created: " + savedInstanceState);
 
         if (savedInstanceState != null) {
             currentTime = savedInstanceState.getLong("time");
@@ -150,6 +146,7 @@ public class Tab1 extends Fragment {
 
             @Override
             public void onFinish() {
+                ((MainActivity) Objects.requireNonNull(getActivity())).setSoundOn();
                 mediaPlayer.start();
                 stopRingtone();
             }
@@ -201,8 +198,9 @@ public class Tab1 extends Fragment {
 
     private void setRingtone() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String alarmString = sharedPreferences.getString("key_pom_end_ringtone", "DEFAULT_RINGTONE");
+        String alarmString = sharedPreferences.getString("key_pom_end_ringtone", "-1");
         alarmValue = Uri.parse(alarmString);
+        mediaPlayer = MediaPlayer.create(getContext(), alarmValue);
     }
 
     public void stopRingtone() {
