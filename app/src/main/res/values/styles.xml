@@ -16,6 +16,13 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <style name="SettingsActionBarTheme" parent="Theme.AppCompat.Light">
+        <item name="android:textColorPrimary">@color/colorWhite</item>
+        <item name="colorPrimary">@color/colorSettings</item>
+        <item name="windowActionBarOverlay">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

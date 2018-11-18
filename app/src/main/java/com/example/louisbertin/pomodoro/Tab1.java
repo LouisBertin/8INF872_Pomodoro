@@ -58,7 +58,7 @@ public class Tab1 extends Fragment {
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.tab1, container, false);
 
-        // setSoundSwitch();
+        setSoundSwitch();
 
         setRingtone();
 
@@ -185,7 +185,7 @@ public class Tab1 extends Fragment {
     }
 
     private void setSoundSwitch() {
-        // soundSwitch = rootView.findViewById(R.id.silentSwitch);
+        soundSwitch = rootView.findViewById(R.id.silentSwitch);
         soundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -235,12 +235,14 @@ public class Tab1 extends Fragment {
                 timerStartImage.setVisibility(View.INVISIBLE);
                 timerMinutesText.setVisibility(View.VISIBLE);
                 timerSecondsText.setVisibility(View.VISIBLE);
+                soundSwitch.setVisibility(View.VISIBLE);
                 break;
             case Stopped:
                 currentTaskText.setVisibility(View.INVISIBLE);
                 timerStartImage.setVisibility(View.VISIBLE);
                 timerMinutesText.setVisibility(View.INVISIBLE);
                 timerSecondsText.setVisibility(View.INVISIBLE);
+                soundSwitch.setVisibility(View.INVISIBLE);
                 break;
         }
     }
