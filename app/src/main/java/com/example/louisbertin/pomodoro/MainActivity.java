@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -141,9 +142,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private Boolean hasValidNotificationPermission() {
-        NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && Objects.requireNonNull((Objects.requireNonNull(notificationManager)).isNotificationPolicyAccessGranted()));
+        return (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M);
     }
 
     private void alertNotificationPermission() {
