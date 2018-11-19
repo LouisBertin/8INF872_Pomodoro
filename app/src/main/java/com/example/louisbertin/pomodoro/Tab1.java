@@ -2,6 +2,8 @@ package com.example.louisbertin.pomodoro;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
@@ -194,24 +197,7 @@ public class Tab1 extends Fragment {
 
         currentTaskText.setText(currentTask);
         updateVisibility(State.Running);
-
-        // Create an explicit intent for an Activity in your app
-        Intent intent = new Intent(getContext(), MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
-
-        // display notification on lock screen
-        mBuilder = new NotificationCompat.Builder(getContext())
-                .setSmallIcon(R.drawable.ic_caml)
-                .setContentTitle("Timer is running!")
-                .setContentText("Go back to Caml app...")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
-        notificationManager.notify(0, mBuilder.build());
+        displayTimerNotification();
 
         timer.start();
     }
@@ -307,6 +293,42 @@ public class Tab1 extends Fragment {
                 soundSwitch.setVisibility(View.INVISIBLE);
                 break;
         }
+    }
+
+    /**
+     * display notification when timer is running
+     */
+    private void displayTimerNotification() {
+        // Create an explicit intent for an Activity in your app
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
+
+        // Init notification objects
+        NotificationChannel mChannel = null;
+        NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        mBuilder = new NotificationCompat.Builder(mContext, null);
+
+        mBuilder.setSmallIcon(R.drawable.ic_caml)
+                .setContentTitle("Timer is running!")
+                .setContentText("Go back to Caml app...")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        // Add channel if SDK > 26
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mChannel = new NotificationChannel("my_channel_id", "caml", NotificationManager.IMPORTANCE_LOW);
+            // Configure the notification channel.
+            mChannel.enableLights(true);
+            mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            mBuilder.setChannelId("my_channel_id");
+
+            mNotificationManager.createNotificationChannel(mChannel);
+        }
+
+        mNotificationManager.notify(0, mBuilder.build());
     }
 }
 
