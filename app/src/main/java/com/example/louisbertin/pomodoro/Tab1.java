@@ -56,7 +56,7 @@ public class Tab1 extends Fragment {
     private Uri alarmValue;
     private MediaPlayer mediaPlayer;
 
-//    private NotificationCompat.Builder mBuilder;
+    protected NotificationCompat.Builder mBuilder;
 
 
     @Override
@@ -146,25 +146,18 @@ public class Tab1 extends Fragment {
 
             @Override
             public void onTick(long l) {
+                // TODO : dumb code.. need to reformat
+                int time_in_seconds = (int) l / 1000;
+                // format time
+                int hours = time_in_seconds / 3600;
+                int minutes = (time_in_seconds % 3600) / 60;
+                int seconds = time_in_seconds % 60;
+                String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
 
-/*                String s = String.valueOf(l / ONE_SECOND);
-
-                // Create an explicit intent for an Activity in your app
-                Intent intent = new Intent(getContext(), MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
                 // display notification on lock screen
-                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext())
-                        .setSmallIcon(R.drawable.ic_caml)
-                        .setContentTitle(s)
-                        .setContentText("Go back to Caml app...")
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .setContentIntent(pendingIntent)
-                        .setAutoCancel(true);
-
+                mBuilder.setContentText(timeString);
                 NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
-                notificationManager.notify(0, mBuilder.build());*/
+                notificationManager.notify(0, mBuilder.build());
 
                 currentTime -= ONE_SECOND;
                 updateTimerText((int) l / ONE_SECOND);
@@ -192,9 +185,9 @@ public class Tab1 extends Fragment {
         PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
 
         // display notification on lock screen
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext())
+        mBuilder = new NotificationCompat.Builder(getContext())
                 .setSmallIcon(R.drawable.ic_caml)
-                .setContentTitle("Timer is running")
+                .setContentTitle("Timer is running!")
                 .setContentText("Go back to Caml app...")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
