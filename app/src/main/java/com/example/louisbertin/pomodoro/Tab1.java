@@ -2,7 +2,9 @@ package com.example.louisbertin.pomodoro;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -12,6 +14,8 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +55,8 @@ public class Tab1 extends Fragment {
     private Switch soundSwitch;
     private Uri alarmValue;
     private MediaPlayer mediaPlayer;
+
+//    private NotificationCompat.Builder mBuilder;
 
 
     @Override
@@ -140,6 +146,26 @@ public class Tab1 extends Fragment {
 
             @Override
             public void onTick(long l) {
+
+/*                String s = String.valueOf(l / ONE_SECOND);
+
+                // Create an explicit intent for an Activity in your app
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
+                // display notification on lock screen
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext())
+                        .setSmallIcon(R.drawable.ic_caml)
+                        .setContentTitle(s)
+                        .setContentText("Go back to Caml app...")
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true);
+
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
+                notificationManager.notify(0, mBuilder.build());*/
+
                 currentTime -= ONE_SECOND;
                 updateTimerText((int) l / ONE_SECOND);
             }
@@ -159,6 +185,24 @@ public class Tab1 extends Fragment {
         currentTaskText.setText(currentTask);
         updateVisibility(State.Running);
 
+        // Create an explicit intent for an Activity in your app
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
+
+        // display notification on lock screen
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext())
+                .setSmallIcon(R.drawable.ic_caml)
+                .setContentTitle("Timer is running")
+                .setContentText("Go back to Caml app...")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
+        notificationManager.notify(0, mBuilder.build());
+
         timer.start();
     }
 
@@ -173,6 +217,10 @@ public class Tab1 extends Fragment {
                         updateVisibility(State.Stopped);
                         timer.cancel();
                         setNewTimer(initialTime);
+
+                        // remove lock screen notification
+                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
+                        notificationManager.cancel(0);
                     }
                 })
                 .setNegativeButton(R.string.button_no, new DialogInterface.OnClickListener() {
