@@ -127,14 +127,18 @@ public class MainActivity extends AppCompatActivity
         if (hasValidNotificationPermission())
             audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
         else
-            alertNotificationPermission();
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+                alertNotificationPermission();
+            }
     }
 
     public void setSoundOn() {
         if (hasValidNotificationPermission())
             audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
         else
-            alertNotificationPermission();
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+                alertNotificationPermission();
+            }
     }
 
     private Boolean hasValidNotificationPermission() {

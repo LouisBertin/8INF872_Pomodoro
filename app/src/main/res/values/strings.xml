@@ -74,7 +74,15 @@
         4. Exercise and books.
     </string>
     <string name="about_pomodoro">What is a pomodoro?</string>
-    <string name="about_pomodoro_text">A pomodoro is a method used for breaking work into multiple cycles of shorter work. \n// TODO Text here</string>
+    <string name="about_pomodoro_text">A pomodoro is a method used for breaking work into multiple cycles of shorter work. \n
+        The process consists of 6 steps :\n
+        1. Choose a task you\'d like to get done.\n
+        2. Set the timer for a cycle.\n
+        3. Work on the task until the timer rings.\n
+        4. When the timer rings, put a checkmark on your TODO list.\n
+        5. Take a short break.\n
+        6. Every 4 cycle, take a longer break.
+    </string>
     <!-- \About Activity -->
 
 </resources>
