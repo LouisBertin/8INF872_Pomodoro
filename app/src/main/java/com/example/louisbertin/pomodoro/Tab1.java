@@ -92,6 +92,14 @@ public class Tab1 extends Fragment {
         mContext = context;
     }
 
+    public void onStart() {
+        super.onStart();
+        // if app is quit with back button : don't kill everything
+        if (currentTime != 0) {
+            running = true;
+        }
+    }
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putLong("time", currentTime);
