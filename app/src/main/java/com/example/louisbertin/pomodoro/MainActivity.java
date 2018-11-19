@@ -1,9 +1,16 @@
 package com.example.louisbertin.pomodoro;
 
+import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -17,13 +24,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private AudioManager audioManager;
-    private int prevSoundState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +78,7 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -115,10 +123,42 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void setSoundOff() {
-        audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+        if (hasValidNotificationPermission())
+            audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+        else
+            alertNotificationPermission();
     }
 
     public void setSoundOn() {
-        audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+        if (hasValidNotificationPermission())
+            audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+        else
+            alertNotificationPermission();
+    }
+
+    private Boolean hasValidNotificationPermission() {
+        NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && Objects.requireNonNull((Objects.requireNonNull(notificationManager)).isNotificationPolicyAccessGranted()));
+    }
+
+    private void alertNotificationPermission() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Permission needed!")
+                .setMessage("We need your permission to silence your phone, else this button will pretty much be useless.")
+                .setPositiveButton(R.string.button_yes, new DialogInterface.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.M)
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS));
+                    }
+                })
+                .setNegativeButton(R.string.button_no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .create()
+                .show();
     }
 }

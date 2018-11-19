@@ -180,8 +180,8 @@ public class Tab1 extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 })
-                .create();
-        alert.show();
+                .create()
+                .show();
     }
 
     private void setSoundSwitch() {
@@ -189,12 +189,16 @@ public class Tab1 extends Fragment {
         soundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) ((MainActivity) Objects.requireNonNull(getActivity())).setSoundOff();
-                else ((MainActivity) Objects.requireNonNull(getActivity())).setSoundOn();
+                if (isChecked) {
+                    ((MainActivity) Objects.requireNonNull(getActivity())).setSoundOff();
+                } else {
+                    ((MainActivity) Objects.requireNonNull(getActivity())).setSoundOn();
+                }
                 Log.d("pwt", "value changed" + soundSwitch.isChecked());
             }
         });
     }
+
 
     private void setRingtone() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -216,8 +220,8 @@ public class Tab1 extends Fragment {
                         setNewTimer(initialTime);
                     }
                 })
-                .create();
-        alert.show();
+                .create()
+                .show();
     }
 
     private void updateTimerText(int time) {
