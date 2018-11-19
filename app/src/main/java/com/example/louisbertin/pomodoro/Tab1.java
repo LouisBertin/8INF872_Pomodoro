@@ -3,6 +3,7 @@ package com.example.louisbertin.pomodoro;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -57,6 +58,7 @@ public class Tab1 extends Fragment {
     private MediaPlayer mediaPlayer;
 
     protected NotificationCompat.Builder mBuilder;
+    private Context mContext;
 
 
     @Override
@@ -81,6 +83,13 @@ public class Tab1 extends Fragment {
         setCurrentTask();
 
         checkRunningState();
+    }
+
+    // Initialise it from onAttach()
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
     }
 
     @Override
@@ -156,7 +165,7 @@ public class Tab1 extends Fragment {
 
                 // display notification on lock screen
                 mBuilder.setContentText(timeString);
-                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
                 notificationManager.notify(0, mBuilder.build());
 
                 currentTime -= ONE_SECOND;
