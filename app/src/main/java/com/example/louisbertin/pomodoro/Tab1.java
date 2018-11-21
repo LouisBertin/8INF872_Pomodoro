@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -26,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -70,7 +73,6 @@ public class Tab1 extends Fragment {
         rootView = inflater.inflate(R.layout.tab1, container, false);
 
         setSoundSwitch();
-
         setRingtone();
 
         PreferenceManager.setDefaultValues(getContext(), R.xml.pref_main, false);
@@ -84,7 +86,6 @@ public class Tab1 extends Fragment {
 
         setTimer();
         setCurrentTask();
-
         checkRunningState();
     }
 
@@ -97,6 +98,9 @@ public class Tab1 extends Fragment {
 
     public void onStart() {
         super.onStart();
+
+        changeButtonColor();
+
         // if app is quit with back button : don't kill everything
         if (currentTime != 0) {
             running = true;
@@ -329,6 +333,18 @@ public class Tab1 extends Fragment {
         }
 
         mNotificationManager.notify(0, mBuilder.build());
+    }
+
+    private void changeButtonColor() {
+        SharedPreferences mSharedPreference= PreferenceManager.getDefaultSharedPreferences(getContext());
+        String color = mSharedPreference.getString("button_color", "008577" );
+        int colorInt = Color.parseColor("#" + color);
+
+        RelativeLayout Layout = (RelativeLayout) rootView.findViewById(R.id.timer_button);
+        GradientDrawable shape = new GradientDrawable();
+        shape.setShape(GradientDrawable.OVAL);
+        shape.setColor(colorInt);
+        Layout.setBackground(shape);
     }
 }
 

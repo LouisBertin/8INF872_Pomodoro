@@ -1,5 +1,7 @@
 package com.example.louisbertin.pomodoro;
 
+import android.app.Activity;
+import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -9,14 +11,12 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.kizitonwose.colorpreference.ColorPreference;
 
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
-    private static final String TAG = "pwt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,15 +33,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_main);
 
+            // save color preference
+            ColorPreference colorPreference = (ColorPreference) findPreference("key_color");
+            saveColorPickerValue(colorPreference, getActivity());
+
             // notification preference change listener
             bindPreferenceSummaryToValue(findPreference(getString(R.string.key_notifications_new_message_ringtone)));
-
             bindPreferenceSummaryToValue(findPreference(getString(R.string.key_pomodoro_cycle)));
-
             bindPreferenceSummaryToValue(findPreference(getString(R.string.key_pom_end_ringtone)));
-
             bindPreferenceSummaryToValue(findPreference(getString(R.string.key_time_pom)));
-
         }
     }
 
@@ -105,4 +105,21 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return true;
         }
     };
+
+    private static void saveColorPickerValue(ColorPreference colorPreference, final Activity activity) {
+        colorPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if ("key_color".equals(preference.getKey())) {
+                    String newDefaultColor = Integer.toHexString((int) newValue).substring(2);
+
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString("button_color", newDefaultColor);
+                    editor.commit();
+                }
+                return true;
+            }
+        });
+    }
+
 }
