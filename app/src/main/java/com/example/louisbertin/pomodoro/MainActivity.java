@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,9 +22,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
-
-import java.util.Objects;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -31,6 +34,7 @@ public class MainActivity extends AppCompatActivity
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private AudioManager audioManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,8 @@ public class MainActivity extends AppCompatActivity
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        updateUI();
+
     }
 
     @Override
@@ -82,7 +88,9 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_stats) {
+        if (id == R.id.nav_login) {
+            startActivity(new Intent(this, LoginActivity.class));
+        } else if (id == R.id.nav_stats) {
 
         } else if (id == R.id.nav_account) {
 
@@ -163,4 +171,17 @@ public class MainActivity extends AppCompatActivity
                 .create()
                 .show();
     }
+
+
+    public void updateUI(){
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        TextView username = (TextView) headerView.findViewById(R.id.username);
+        username.setText("Coucou");
+        TextView userId=(TextView)headerView.findViewById(R.id.userId);
+        userId.setText("azertyuifghj");
+        //ImageView profilePic=(ImageView)headerView.findViewById(R.id.profile_pic);
+        //profilePic.setImageResource(R.drawable.ic_caml);
+    }
+
 }
