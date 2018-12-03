@@ -90,7 +90,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             updateUI();
         }
-
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

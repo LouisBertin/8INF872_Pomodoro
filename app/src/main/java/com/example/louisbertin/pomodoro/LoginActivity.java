@@ -9,6 +9,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.louisbertin.pomodoro.entity.User;
+import com.example.louisbertin.pomodoro.repository.UserListener;
+import com.example.louisbertin.pomodoro.repository.UserRepository;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -22,6 +25,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -67,11 +72,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            hideLoginButton();
-        }
     }
 
     // sign out user on click
@@ -92,6 +92,24 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("pwt", "signInWithCredential:success");
                             hideLoginButton();
+
+                            // insert user if he doesn't exist
+                            FirebaseUser currentUser = mAuth.getCurrentUser();
+                            final User user = new User(currentUser.getUid(), currentUser.getDisplayName(), currentUser.getEmail());
+                            final UserRepository userRepository = new UserRepository();
+                            userRepository.getCurrentUser(new UserListener() {
+                                @Override public void onStart() {}
+
+                                @Override
+                                public void onSuccess(DataSnapshot data) {
+                                    if (data.getValue() == null) {
+                                        userRepository.writeNewUser(user);
+                                    }
+                                }
+
+                                @Override public void onFailed(DatabaseError databaseError) {}
+                            });
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("pwt", "signInWithCredential:failure", task.getException());
