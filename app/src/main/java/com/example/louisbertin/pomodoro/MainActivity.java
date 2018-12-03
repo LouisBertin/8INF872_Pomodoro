@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,11 +21,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -67,8 +66,6 @@ public class MainActivity extends AppCompatActivity
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        updateUI();
-
     }
 
     @Override
@@ -80,6 +77,20 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // check is user is connected
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            updateUI(user);
+        } else {
+            updateUI();
+        }
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -172,16 +183,18 @@ public class MainActivity extends AppCompatActivity
                 .show();
     }
 
-
-    public void updateUI(){
+    public void updateUI(FirebaseUser user){
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
-        TextView username = (TextView) headerView.findViewById(R.id.username);
-        username.setText("Coucou");
-        TextView userId=(TextView)headerView.findViewById(R.id.userId);
-        userId.setText("azertyuifghj");
-        //ImageView profilePic=(ImageView)headerView.findViewById(R.id.profile_pic);
-        //profilePic.setImageResource(R.drawable.ic_caml);
+        TextView userId = (TextView) headerView.findViewById(R.id.userId);
+        userId.setText(user.getDisplayName());
+    }
+
+    private void updateUI(){
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        TextView userId = (TextView) headerView.findViewById(R.id.userId);
+        userId.setText(R.string.nav_header_subtitle);
     }
 
 }
