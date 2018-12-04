@@ -1,10 +1,9 @@
 package com.example.louisbertin.pomodoro.entity;
 
 public class User {
-    private String uuid;
-    private String username;
-    private String email;
-
+    public String uuid;
+    public String username;
+    public String email;
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)

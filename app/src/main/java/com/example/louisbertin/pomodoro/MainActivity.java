@@ -22,8 +22,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-
-import java.util.Objects;
+import android.view.View;
+import android.widget.TextView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private AudioManager audioManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,13 +79,28 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // check is user is connected
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            updateUI(user);
+        } else {
+            updateUI();
+        }
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_stats) {
+        if (id == R.id.nav_login) {
+            startActivity(new Intent(this, LoginActivity.class));
+        } else if (id == R.id.nav_stats) {
 
         } else if (id == R.id.nav_account) {
 
@@ -163,4 +181,19 @@ public class MainActivity extends AppCompatActivity
                 .create()
                 .show();
     }
+
+    public void updateUI(FirebaseUser user){
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        TextView userId = (TextView) headerView.findViewById(R.id.userId);
+        userId.setText(user.getDisplayName());
+    }
+
+    private void updateUI(){
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        TextView userId = (TextView) headerView.findViewById(R.id.userId);
+        userId.setText(R.string.nav_header_subtitle);
+    }
+
 }
