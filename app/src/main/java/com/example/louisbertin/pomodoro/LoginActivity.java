@@ -16,8 +16,8 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -28,11 +28,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
+import java.util.Arrays;
+
 public class LoginActivity extends AppCompatActivity {
 
-
     private FirebaseAuth mAuth;
-    LoginButton loginButton;
+    Button loginButton;
+    Button loginFacebookButton;
+    @Deprecated
     Button logoutButton;
     CallbackManager mCallbackManager = CallbackManager.Factory.create();
 
@@ -41,37 +44,60 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
-        // get views
-        loginButton = (LoginButton)findViewById(R.id.login_button);
-        logoutButton = (Button) findViewById(R.id.logout_button);
+
+        /*
+        logoutButton = findViewById(R.id.logout_button);
         logoutButton.setVisibility(View.INVISIBLE);
+        */
 
-        loginButton.setReadPermissions("email", "public_profile");
-
-        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            private static final String TAG = "pwt";
-
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                handleFacebookAccessToken(loginResult.getAccessToken());
-            }
-
-            @Override
-            public void onCancel() {
-                Log.d(TAG, "facebook:onCancel");
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                Log.d(TAG, "facebook:onError", error);
-            }
-        });
+        setLogin();
+        setFacebookLogin();
     }
 
     @Override
     public void onStart() {
         super.onStart();
+    }
+
+    private void setLogin() {
+        loginButton = findViewById(R.id.login_button);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("login", "LOGIN NOT YET IMPLEMENTED LIKE THIS HAAAA");
+            }
+        });
+    }
+
+    private void setFacebookLogin() {
+        LoginManager.getInstance().registerCallback(mCallbackManager,
+                new FacebookCallback<LoginResult>() {
+                    private static final String TAG = "pwt";
+
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                        handleFacebookAccessToken(loginResult.getAccessToken());
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Log.d(TAG, "facebook:onCancel");
+                    }
+
+                    @Override
+                    public void onError(FacebookException error) {
+                        Log.d(TAG, "facebook:onError", error);
+                    }
+                });
+
+        loginFacebookButton = findViewById(R.id.login_button_facebook);
+        loginFacebookButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("email", "public_profile"));
+            }
+        });
     }
 
     // sign out user on click
@@ -98,7 +124,9 @@ public class LoginActivity extends AppCompatActivity {
                             final User user = new User(currentUser.getUid(), currentUser.getDisplayName(), currentUser.getEmail());
                             final UserRepository userRepository = new UserRepository();
                             userRepository.getCurrentUser(new UserListener() {
-                                @Override public void onStart() {}
+                                @Override
+                                public void onStart() {
+                                }
 
                                 @Override
                                 public void onSuccess(DataSnapshot data) {
@@ -107,7 +135,9 @@ public class LoginActivity extends AppCompatActivity {
                                     }
                                 }
 
-                                @Override public void onFailed(DatabaseError databaseError) {}
+                                @Override
+                                public void onFailed(DatabaseError databaseError) {
+                                }
                             });
 
                         } else {

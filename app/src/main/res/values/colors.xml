@@ -8,6 +8,9 @@
     <color name="colorUnselectedTab">#34000000</color>
     <color name="colorSettings">#fda085</color>
 
+    <!-- Login Screen -->
+    <color name="colorDarkGrey">#8b8b8b</color>
+
     <!-- Splash Screen -->
     <color name="colorGrey">#CCCCCC</color>
 </resources>

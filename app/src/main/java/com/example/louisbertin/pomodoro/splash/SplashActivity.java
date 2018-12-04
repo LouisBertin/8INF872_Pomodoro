@@ -6,6 +6,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -42,12 +43,11 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void checkFirstRun() {
-        SharedPreferences settings = getSharedPreferences("preferences", 0);
+        SharedPreferences settings = getSharedPreferences("preferences", MODE_PRIVATE);
         boolean firstRun = settings.getBoolean("firstRun", true);
+        Log.d("splash", "first run: " + firstRun);
         if (firstRun) {
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean("firstRun", false);
-            editor.apply();
+            settings.edit().putBoolean("firstRun", false).apply();
         } else {
             startActivity(new Intent(this, MainActivity.class));
             finish();
