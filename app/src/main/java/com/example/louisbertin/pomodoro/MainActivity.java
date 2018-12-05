@@ -21,11 +21,19 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import com.example.louisbertin.pomodoro.entity.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -33,6 +41,10 @@ public class MainActivity extends AppCompatActivity
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private AudioManager audioManager;
+
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference myRef;
+
 
 
     @Override
@@ -66,6 +78,41 @@ public class MainActivity extends AppCompatActivity
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+        setDatabase();
+    }
+
+    public void setDatabase(){
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        myRef = mFirebaseDatabase.getReference();
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                getUserData(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    private void getUserData(DataSnapshot dataSnapshot) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String userID = user.getUid();
+        for(DataSnapshot ds : dataSnapshot.getChildren()){
+            User mailUser = new User();
+            mailUser.setUsername(ds.child(userID).getValue(User.class).getUsername()); //set the name
+            mailUser.setEmail(ds.child(userID).getValue(User.class).getEmail()); //set the email
+
+            Log.d("pwet", "showData: name: " + mailUser.getUsername());
+            Log.d("pwet", "showData: email: " + mailUser.getEmail());
+            updateUI(mailUser);
+        }
     }
 
     @Override
@@ -91,6 +138,7 @@ public class MainActivity extends AppCompatActivity
             updateUI();
         }
     }
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -187,6 +235,13 @@ public class MainActivity extends AppCompatActivity
         View headerView = navigationView.getHeaderView(0);
         TextView userId = (TextView) headerView.findViewById(R.id.userId);
         userId.setText(user.getDisplayName());
+    }
+
+    public void updateUI(User user){
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        TextView userId = (TextView) headerView.findViewById(R.id.userId);
+        userId.setText(user.getUsername());
     }
 
     private void updateUI(){

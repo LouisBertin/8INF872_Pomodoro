@@ -9,6 +9,18 @@ public class User {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public User(String uuid, String username, String email) {
         this.uuid = uuid;
         this.username = username;
