@@ -103,15 +103,15 @@ public class MainActivity extends AppCompatActivity
 
     private void getUserData(DataSnapshot dataSnapshot) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String userID = user.getUid();
-        for(DataSnapshot ds : dataSnapshot.getChildren()){
-            User mailUser = new User();
-            mailUser.setUsername(ds.child(userID).getValue(User.class).getUsername()); //set the name
-            mailUser.setEmail(ds.child(userID).getValue(User.class).getEmail()); //set the email
+        if (user != null) {
+            String userID = user.getUid();
+            for(DataSnapshot ds : dataSnapshot.getChildren()){
+                User mailUser = new User();
+                mailUser.setUsername(ds.child(userID).getValue(User.class).getUsername()); //set the name
+                mailUser.setEmail(ds.child(userID).getValue(User.class).getEmail()); //set the email
 
-            Log.d("pwet", "showData: name: " + mailUser.getUsername());
-            Log.d("pwet", "showData: email: " + mailUser.getEmail());
-            updateUI(mailUser);
+                updateUI(mailUser);
+            }
         }
     }
 
