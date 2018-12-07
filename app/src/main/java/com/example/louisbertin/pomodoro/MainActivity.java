@@ -148,6 +148,8 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_login) {
             startActivity(new Intent(this, LoginActivity.class));
+        } else if (id == R.id.nav_todos) {
+            startActivity(new Intent(this, TodoActivity.class));
         } else if (id == R.id.nav_stats) {
 
         } else if (id == R.id.nav_account) {
@@ -231,17 +233,25 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void updateUI(FirebaseUser user){
+        // change user name and email in menu
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
         TextView userId = (TextView) headerView.findViewById(R.id.userId);
         userId.setText(user.getDisplayName());
+
+        // show todos menu
+        navigationView.getMenu().findItem(R.id.nav_todos).setVisible(true);
     }
 
     public void updateUI(User user){
+        // change user name and email in menu
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
         TextView userId = (TextView) headerView.findViewById(R.id.userId);
         userId.setText(user.getUsername());
+
+        // show todos menu
+        navigationView.getMenu().findItem(R.id.nav_todos).setVisible(true);
     }
 
     private void updateUI(){
@@ -249,6 +259,9 @@ public class MainActivity extends AppCompatActivity
         View headerView = navigationView.getHeaderView(0);
         TextView userId = (TextView) headerView.findViewById(R.id.userId);
         userId.setText(R.string.nav_header_subtitle);
+
+        // hide todos menu
+        navigationView.getMenu().findItem(R.id.nav_todos).setVisible(false);
     }
 
 }

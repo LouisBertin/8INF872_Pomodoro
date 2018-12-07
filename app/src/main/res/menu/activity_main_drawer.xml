@@ -8,7 +8,11 @@
             android:id="@+id/nav_login"
             android:icon="@drawable/ic_menu_facebook"
             android:title="@string/login" />
-
+        <item
+            android:id="@+id/nav_todos"
+            android:icon="@drawable/ic_noun_todo"
+            android:title="@string/todos"
+            android:visible="false" />
         <item
             android:id="@+id/nav_stats"
             android:icon="@drawable/ic_menu_stats"

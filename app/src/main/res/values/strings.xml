@@ -10,9 +10,12 @@
     <string name="tab_text_1">Timer</string>
     <string name="tab_text_2">Project</string>
     <string name="tab_text_3">TODO</string>
+    <string name="tab_todo_text_1">Todos</string>
+    <string name="tab_todo_text_2">Settings</string>
     <string name="settings">Settings</string>
     <string name="stats">Statistics</string>
     <string name="login">Login</string>
+    <string name="todos">Todos</string>
     <string name="info">Information</string>
     <string name="about">About</string>
     <string name="account">Account</string>
@@ -102,6 +105,9 @@
     <string name="action_facebook_sign_up">Sign up with Facebook</string>
     <string name="facebook_app_id">1949822291778023</string>
     <string name="fb_login_protocol_scheme">fb1949822291778023</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>
