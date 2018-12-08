@@ -1,4 +1,4 @@
-package com.example.louisbertin.pomodoro;
+package com.example.louisbertin.pomodoro.MainFragments;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -31,6 +31,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import com.example.louisbertin.pomodoro.MainActivity;
+import com.example.louisbertin.pomodoro.R;
 
 import java.util.Objects;
 

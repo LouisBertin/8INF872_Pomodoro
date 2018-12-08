@@ -25,6 +25,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.louisbertin.pomodoro.MainFragments.Tab1;
+import com.example.louisbertin.pomodoro.MainFragments.Tab2;
+import com.example.louisbertin.pomodoro.MainFragments.Tab3;
 import com.example.louisbertin.pomodoro.entity.User;
 import com.example.louisbertin.pomodoro.repository.UserListener;
 import com.example.louisbertin.pomodoro.repository.UserRepository;
