@@ -3,12 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="20dp"
     tools:context=".TodoFragments.TodoFragment1">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Fragment 1" />
+        android:layout_height="wrap_content"
+        android:text="Mes projets"
+        android:textSize="25sp" />
+
+    <LinearLayout
+        android:id="@+id/user_projects"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:orientation="vertical">
+    </LinearLayout>
 
 </FrameLayout>

@@ -8,4 +8,5 @@
     <color name="colorUnselectedTab">#34000000</color>
     <color name="testColor">#6588f6</color>
     <color name="colorSettings">#fda085</color>
+    <color name="flatGrey">#ecf0f1</color>
 </resources>

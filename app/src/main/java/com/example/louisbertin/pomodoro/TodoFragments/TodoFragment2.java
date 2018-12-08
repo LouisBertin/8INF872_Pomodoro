@@ -7,8 +7,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.louisbertin.pomodoro.R;
+import com.example.louisbertin.pomodoro.entity.Project;
+import com.example.louisbertin.pomodoro.repository.ProjectRepository;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,6 +23,8 @@ import com.example.louisbertin.pomodoro.R;
  */
 public class TodoFragment2 extends Fragment {
     private Context mContext;
+    private EditText editName;
+    private ProjectRepository projectRepository = new ProjectRepository();
 
     private OnFragmentInteractionListener mListener;
 
@@ -35,7 +41,13 @@ public class TodoFragment2 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_todo_fragment2, container, false);
+        View v = inflater.inflate(R.layout.fragment_todo_fragment2, container, false);
+        addProject(v);
+
+        // initialise Views
+        editName = (EditText) v.findViewById(R.id.project_name);
+
+        return v;
     }
 
     // Initialise it from onAttach()
@@ -64,5 +76,21 @@ public class TodoFragment2 extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void addProject(View v) {
+        Button addProjectButton = (Button) v.findViewById(R.id.add_project);
+
+        addProjectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // fetch view data
+                String name = editName.getText().toString();
+
+                // insert project
+                Project project = new Project(name);
+                projectRepository.writeNewProject(project);
+            }
+        });
     }
 }
