@@ -121,8 +121,6 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(this, TodoActivity.class));
         } else if (id == R.id.nav_stats) {
 
-        } else if (id == R.id.nav_account) {
-
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
         } else if (id == R.id.nav_about) {
