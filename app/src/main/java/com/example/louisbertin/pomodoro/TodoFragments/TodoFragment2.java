@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.louisbertin.pomodoro.R;
 import com.example.louisbertin.pomodoro.entity.Project;
@@ -90,6 +91,8 @@ public class TodoFragment2 extends Fragment {
                 // insert project
                 Project project = new Project(name);
                 projectRepository.writeNewProject(project);
+                editName.setText("");
+                Toast.makeText(mContext, "Projet ajouté!", Toast.LENGTH_SHORT).show();
             }
         });
     }
