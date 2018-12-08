@@ -25,9 +25,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.louisbertin.pomodoro.MainFragments.Tab1;
-import com.example.louisbertin.pomodoro.MainFragments.Tab2;
-import com.example.louisbertin.pomodoro.MainFragments.Tab3;
 import com.example.louisbertin.pomodoro.entity.User;
 import com.example.louisbertin.pomodoro.repository.UserListener;
 import com.example.louisbertin.pomodoro.repository.UserRepository;
@@ -141,11 +138,7 @@ public class MainActivity extends AppCompatActivity
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new Tab1();
-                case 1:
-                    return new Tab2();
-                case 2:
-                    return new Tab3();
+                    return new Timer();
                 default:
                     return null;
             }
@@ -153,7 +146,7 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public int getCount() {
-            return 3;
+            return 1;
         }
     }
 
