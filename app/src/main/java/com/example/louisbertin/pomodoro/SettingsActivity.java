@@ -38,7 +38,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             saveColorPickerValue(colorPreference, getActivity());
 
             // notification preference change listener
-            bindPreferenceSummaryToValue(findPreference(getString(R.string.key_notifications_new_message_ringtone)));
             bindPreferenceSummaryToValue(findPreference(getString(R.string.key_pomodoro_cycle)));
             bindPreferenceSummaryToValue(findPreference(getString(R.string.key_pom_end_ringtone)));
             bindPreferenceSummaryToValue(findPreference(getString(R.string.key_time_pom)));
