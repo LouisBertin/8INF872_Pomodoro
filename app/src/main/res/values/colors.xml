@@ -10,7 +10,8 @@
 
     <!-- Login Screen -->
     <color name="colorDarkGrey">#8b8b8b</color>
+    <color name="colorBlueFacebook">#0084FF</color>
 
     <!-- Splash Screen -->
-    <color name="colorGrey">#CCCCCC</color>
+    <color name="colorGrey">#cccccc</color>
 </resources>

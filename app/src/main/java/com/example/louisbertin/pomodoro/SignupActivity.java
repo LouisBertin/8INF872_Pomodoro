@@ -4,11 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.louisbertin.pomodoro.entity.User;
@@ -32,63 +30,24 @@ import com.google.firebase.database.DatabaseError;
 
 import java.util.Arrays;
 
-public class LoginActivity extends AppCompatActivity {
+public class SignupActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    Button loginButton;
-    Button loginFacebookButton;
-    Button signUpButton;
+    private CallbackManager mCallbackManager;
 
-    @Deprecated
-    Button logoutButton;
-
-    private AppCompatAutoCompleteTextView userMail;
-    private EditText userPassword;
-
-    CallbackManager mCallbackManager = CallbackManager.Factory.create();
+    private Button loginFacebookButton;
+    private Button mSignUpButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_signup);
+
         mAuth = FirebaseAuth.getInstance();
+        mCallbackManager = CallbackManager.Factory.create();
 
-        /*
-        logoutButton = findViewById(R.id.logout_button);
-        logoutButton.setVisibility(View.INVISIBLE);
-        */
-
-        setLogin();
         setFacebookLogin();
-        setSignup();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    /*
-    * Bind le bouton de retour à l'activité principale
-    * Autrement pourrait retourner X fois sur SignupActivity
-    * */
-    @Override
-    public void onBackPressed() {
-        startActivity(new Intent(LoginActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-    }
-
-    private void setLogin() {
-        userMail = findViewById(R.id.signup_mail);
-        userPassword = findViewById(R.id.login_password);
-
-        loginButton = findViewById(R.id.login_button);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("login", "Login not yet implemented here");
-                Log.d("login", "your password is " + userPassword.getText() + " lmao");
-            }
-        });
+        setSignIn();
     }
 
     private void setFacebookLogin() {
@@ -113,30 +72,23 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
 
-        loginFacebookButton = findViewById(R.id.login_button_facebook);
+        loginFacebookButton = findViewById(R.id.signup_button_facebook);
         loginFacebookButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("email", "public_profile"));
+                LoginManager.getInstance().logInWithReadPermissions(SignupActivity.this, Arrays.asList("email", "public_profile"));
             }
         });
     }
 
-    public void setSignup() {
-        signUpButton = findViewById(R.id.login_signup);
-        signUpButton.setOnClickListener(new View.OnClickListener() {
+    private void setSignIn() {
+        mSignUpButton = findViewById(R.id.signup_login);
+        mSignUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), SignupActivity.class));
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
             }
         });
-    }
-
-    // sign out user on click
-    public void signOut(View view) {
-        mAuth.signOut();
-        showLoginButton();
-        loginButton.performClick();
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -149,7 +101,6 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("pwt", "signInWithCredential:success");
-                            hideLoginButton();
 
                             // insert user if he doesn't exist
                             FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -175,31 +126,11 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("pwt", "signInWithCredential:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                            Toast.makeText(SignupActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                             //updateUI();
                         }
                     }
                 });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Pass the activity result back to the Facebook SDK
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
-    }
-
-    // show login button
-    private void hideLoginButton() {
-        logoutButton.setVisibility(View.VISIBLE);
-        loginButton.setVisibility(View.INVISIBLE);
-    }
-
-    // hide login button
-    private void showLoginButton() {
-        logoutButton.setVisibility(View.INVISIBLE);
-        loginButton.setVisibility(View.VISIBLE);
     }
 }
