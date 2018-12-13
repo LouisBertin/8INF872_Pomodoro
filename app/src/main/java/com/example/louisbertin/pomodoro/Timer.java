@@ -1,4 +1,4 @@
-package com.example.louisbertin.pomodoro.MainFragments;
+package com.example.louisbertin.pomodoro;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -37,7 +37,7 @@ import com.example.louisbertin.pomodoro.R;
 
 import java.util.Objects;
 
-public class Tab1 extends Fragment {
+public class Timer extends Fragment {
 
     private enum State {
         Running,
@@ -73,7 +73,7 @@ public class Tab1 extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.tab1, container, false);
+        rootView = inflater.inflate(R.layout.activity_timer, container, false);
 
         setSoundSwitch();
         setRingtone();

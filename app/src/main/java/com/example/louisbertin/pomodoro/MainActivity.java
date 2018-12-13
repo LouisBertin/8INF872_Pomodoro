@@ -1,9 +1,11 @@
 package com.example.louisbertin.pomodoro;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -25,9 +28,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.louisbertin.pomodoro.MainFragments.Tab1;
-import com.example.louisbertin.pomodoro.MainFragments.Tab2;
-import com.example.louisbertin.pomodoro.MainFragments.Tab3;
 import com.example.louisbertin.pomodoro.entity.User;
 import com.example.louisbertin.pomodoro.repository.UserListener;
 import com.example.louisbertin.pomodoro.repository.UserRepository;
@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
-
 
 
     @Override
@@ -121,8 +120,6 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(this, TodoActivity.class));
         } else if (id == R.id.nav_stats) {
 
-        } else if (id == R.id.nav_account) {
-
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
         } else if (id == R.id.nav_about) {
@@ -143,11 +140,7 @@ public class MainActivity extends AppCompatActivity
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new Tab1();
-                case 1:
-                    return new Tab2();
-                case 2:
-                    return new Tab3();
+                    return new Timer();
                 default:
                     return null;
             }
@@ -155,26 +148,34 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public int getCount() {
-            return 3;
+            return 1;
         }
     }
 
     public void setSoundOff() {
-        if (hasValidNotificationPermission())
-            audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-        else
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+        if (hasValidNotificationPermission()) {
+            if ((ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_NOTIFICATION_POLICY)
+                    != PackageManager.PERMISSION_GRANTED) && (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)) {
                 alertNotificationPermission();
+            } else {
+                audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
             }
+        } else {
+            audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+        }
     }
 
     public void setSoundOn() {
-        if (hasValidNotificationPermission())
-            audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-        else
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+        if (hasValidNotificationPermission()) {
+            if ((ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_NOTIFICATION_POLICY)
+                    != PackageManager.PERMISSION_GRANTED) && (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)) {
                 alertNotificationPermission();
+            } else {
+                audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
             }
+        } else {
+            audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+        }
     }
 
     private Boolean hasValidNotificationPermission() {
@@ -207,7 +208,8 @@ public class MainActivity extends AppCompatActivity
             UserRepository userRepository = new UserRepository();
             userRepository.getCurrentUser(new UserListener() {
                 @Override
-                public void onStart() {}
+                public void onStart() {
+                }
 
                 @Override
                 public void onSuccess(DataSnapshot data) {
@@ -216,12 +218,13 @@ public class MainActivity extends AppCompatActivity
                 }
 
                 @Override
-                public void onFailed(DatabaseError databaseError) {}
+                public void onFailed(DatabaseError databaseError) {
+                }
             });
         }
     }
 
-    public void updateUI(User user){
+    public void updateUI(User user) {
         // change user name and email in menu
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
@@ -232,7 +235,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.getMenu().findItem(R.id.nav_todos).setVisible(true);
     }
 
-    private void updateUI(){
+    private void updateUI() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
         TextView userId = (TextView) headerView.findViewById(R.id.userId);
