@@ -6,7 +6,13 @@
     <color name="colorWhite">#ffffff</color>
     <color name="backgroundMain">#80000000</color>
     <color name="colorUnselectedTab">#34000000</color>
-    <color name="testColor">#6588f6</color>
     <color name="colorSettings">#fda085</color>
+
+    <!-- Login Screen -->
+    <color name="colorDarkGrey">#8b8b8b</color>
+    <color name="colorBlueFacebook">#0084FF</color>
+
+    <!-- Splash Screen -->
+    <color name="colorGrey">#cccccc</color>
     <color name="flatGrey">#ecf0f1</color>
 </resources>
