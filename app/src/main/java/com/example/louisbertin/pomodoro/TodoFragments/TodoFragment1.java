@@ -89,6 +89,7 @@ public class TodoFragment1 extends Fragment {
      * display all projects
      */
     private void getProjects() {
+
         // fetch user projects
         final LinearLayout linearLayout = v.findViewById(R.id.user_projects);
         UserRepository userRepository = new UserRepository();
@@ -99,10 +100,23 @@ public class TodoFragment1 extends Fragment {
                 linearLayout.removeAllViews();
 
                 // user projectListAdapter
-                mAdapter = new ProjectListAdapter(recipeList);
+                mAdapter = new ProjectListAdapter(recipeList, TodoFragment1.this);
                 mRecyclerView.setAdapter(mAdapter);
             }
         });
+    }
+
+    // check if fragment is visible
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        // Make sure that we are currently visible
+        if (this.isVisible()) {
+            // If we are becoming invisible, then...
+            if (isVisibleToUser) {
+                getProjects();
+            }
+        }
     }
 
     /**

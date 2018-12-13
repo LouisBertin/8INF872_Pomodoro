@@ -29,4 +29,9 @@ public class ProjectRepository {
         userRepository.addProject(key);
     }
 
+    public void deleteProjectById(String id) {
+        mDatabase.child("projects").child(id).removeValue();
+        mDatabase.child("user_projects").child(currentUser.getUid()).child(id).removeValue();
+    }
+
 }
