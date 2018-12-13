@@ -1,18 +1,18 @@
 package com.example.louisbertin.pomodoro.TodoFragments;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.louisbertin.pomodoro.R;
+import com.example.louisbertin.pomodoro.adapter.ProjectListAdapter;
 import com.example.louisbertin.pomodoro.entity.Project;
 import com.example.louisbertin.pomodoro.repository.DataListener;
 import com.example.louisbertin.pomodoro.repository.UserRepository;
@@ -31,6 +31,10 @@ public class TodoFragment1 extends Fragment {
     private Context mContext;
     private View v;
 
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
     private OnFragmentInteractionListener mListener;
 
     public TodoFragment1() {
@@ -47,6 +51,12 @@ public class TodoFragment1 extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v =  inflater.inflate(R.layout.fragment_todo_fragment1, container, false);
+
+        // display projects
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.my_recycler_view);
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(mContext);
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
         return v;
     }
@@ -82,33 +92,15 @@ public class TodoFragment1 extends Fragment {
         // fetch user projects
         final LinearLayout linearLayout = v.findViewById(R.id.user_projects);
         UserRepository userRepository = new UserRepository();
+
         userRepository.getProjects(new DataListener() {
             @Override
             public void newDataReceived(ArrayList<Project> recipeList) {
                 linearLayout.removeAllViews();
-                for (Project project : recipeList) {
-                    TextView item = new TextView(mContext);
-                    item.setText(project.getTitle());
-                    item.setTag(project.getUuid());
-                    item.setTextSize(20);
-                    item.setBackgroundResource(R.color.flatGrey);
-                    item.setPadding(10, 10, 10, 10);
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
-                    params.setMargins(0,20,0,20);
-                    item.setLayoutParams(params);
 
-                    linearLayout.addView(item);
-
-                    // click on project item
-                    item.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // TODO : create answers page
-                            String projectId = v.getTag().toString();
-                            Toast.makeText(mContext, "projectId : " + projectId, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
+                // user projectListAdapter
+                mAdapter = new ProjectListAdapter(recipeList);
+                mRecyclerView.setAdapter(mAdapter);
             }
         });
     }
