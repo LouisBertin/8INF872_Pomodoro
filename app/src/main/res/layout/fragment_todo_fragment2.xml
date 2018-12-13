@@ -26,15 +26,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:hint="Nom"
             android:inputType="textPersonName"
-            android:textColor="@color/backgroundMain"
-            android:hint="Name" />
+            android:textColor="@color/backgroundMain" />
 
         <Button
             android:id="@+id/add_project"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button"
+            android:text="Ajouter"
             android:textAlignment="center"
             tools:targetApi="l" />
 
