@@ -67,12 +67,24 @@
             android:layout_height="match_parent">
 
             <Button
-                android:id="@+id/login_button"
+            android:id="@+id/login_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:text="Login"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/logout_button"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:gravity="center"
-                android:text="Login"
+                android:text="Log Out"
+                android:onClick="signOut"
                 android:textAllCaps="false"
                 android:textColor="@color/colorWhite"
                 android:textSize="16sp" />
@@ -102,6 +114,8 @@
         android:text="Sign up"
         android:textColor="@color/colorDarkGrey"
         android:textSize="12sp" />
+
+
 
     <!--
     <ScrollView

@@ -51,12 +51,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         mAuth = FirebaseAuth.getInstance();
-        // TODO: log out
-        /*
+
+        setContentView(R.layout.activity_login);
+
         logoutButton = findViewById(R.id.logout_button);
         logoutButton.setVisibility(View.INVISIBLE);
-*/
-        setContentView(R.layout.activity_login);
 
         setFacebookLogin();
         setLogin();
