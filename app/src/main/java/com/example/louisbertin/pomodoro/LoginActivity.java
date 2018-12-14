@@ -18,9 +18,8 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.login.Login;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -31,16 +30,18 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
+import java.util.Arrays;
+
 public class LoginActivity extends AppCompatActivity {
 
-
     private FirebaseAuth mAuth;
-    LoginButton loginButton;
+    Button fbLoginButton;
     Button logoutButton;
     CallbackManager mCallbackManager = CallbackManager.Factory.create();
 
-    private EditText mUsernameField,mEmailField,mPasswordField;
-    private Button registerButton, signInButton;
+    private EditText mEmailField;
+    private EditText mPasswordField;
+    private Button mSignUpButton, mLoginButton;
 
     private static final String TAG = "pwt";
 
@@ -48,16 +49,43 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+
         mAuth = FirebaseAuth.getInstance();
-        // get views
-        loginButton = (LoginButton)findViewById(R.id.login_button);
-        logoutButton = (Button) findViewById(R.id.logout_button);
+
+        setContentView(R.layout.activity_login);
+
+        logoutButton = findViewById(R.id.logout_button);
         logoutButton.setVisibility(View.INVISIBLE);
 
-        loginButton.setReadPermissions("email", "public_profile");
+        setFacebookLogin();
+        setLogin();
+    }
 
-        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // check is user is connected
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            hideLoginButton();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+    }
+
+    // sign out user on click
+    public void signOut(View view) {
+        mAuth.signOut();
+        showLoginButton();
+        fbLoginButton.performClick();
+    }
+
+    private void setFacebookLogin() {
+        LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
@@ -75,46 +103,36 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        mUsernameField=findViewById(R.id.username);
-        mEmailField = findViewById(R.id.email);
-        mPasswordField = findViewById(R.id.password);
-        registerButton=findViewById(R.id.email_register_button);
-        signInButton=findViewById(R.id.email_sign_in_button);
-        signInButton.setOnClickListener(new View.OnClickListener() {
+        fbLoginButton = findViewById(R.id.login_facebook);
+        fbLoginButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "email"));
+            }
+
+        });
+    }
+
+    private void setLogin() {
+        mEmailField = findViewById(R.id.login_mail);
+        mPasswordField = findViewById(R.id.login_password);
+
+        mLoginButton = findViewById(R.id.login_button);
+        mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
             }
         });
 
-        registerButton.setOnClickListener(new View.OnClickListener() {
+        mSignUpButton = findViewById(R.id.login_signup);
+        mSignUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createAccount(mUsernameField.getText().toString(),mEmailField.getText().toString(), mPasswordField.getText().toString());
+                startActivity(new Intent(getApplicationContext(), SignupActivity.class));
             }
         });
-
-
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // check is user is connected
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            hideLoginButton();
-        }
-    }
-
-
-
-    // sign out user on click
-    public void signOut(View view) {
-        mAuth.signOut();
-        showLoginButton();
-        loginButton.performClick();
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -134,7 +152,9 @@ public class LoginActivity extends AppCompatActivity {
                             final User user = new User(currentUser.getUid(), currentUser.getDisplayName(), currentUser.getEmail());
                             final UserRepository userRepository = new UserRepository();
                             userRepository.getCurrentUser(new UserListener() {
-                                @Override public void onStart() {}
+                                @Override
+                                public void onStart() {
+                                }
 
                                 @Override
                                 public void onSuccess(DataSnapshot data) {
@@ -143,7 +163,9 @@ public class LoginActivity extends AppCompatActivity {
                                     }
                                 }
 
-                                @Override public void onFailed(DatabaseError databaseError) {}
+                                @Override
+                                public void onFailed(DatabaseError databaseError) {
+                                }
                             });
 
                         } else {
@@ -167,62 +189,17 @@ public class LoginActivity extends AppCompatActivity {
     // show login button
     private void hideLoginButton() {
         logoutButton.setVisibility(View.VISIBLE);
-        loginButton.setVisibility(View.INVISIBLE);
-        signInButton.setVisibility(View.INVISIBLE);
-        registerButton.setVisibility(View.INVISIBLE);
+        fbLoginButton.setVisibility(View.INVISIBLE);
+        mLoginButton.setVisibility(View.INVISIBLE);
+        mSignUpButton.setVisibility(View.INVISIBLE);
     }
 
     // hide login button
     private void showLoginButton() {
         logoutButton.setVisibility(View.INVISIBLE);
-        loginButton.setVisibility(View.VISIBLE);
-        signInButton.setVisibility(View.VISIBLE);
-        registerButton.setVisibility(View.VISIBLE);
-    }
-
-    private void createAccount(final String username, String email, String password) {
-        Log.d(TAG, "createAccount:" + email);
-        if (!validateForm() && !validateUser()) {
-            return;
-        }
-
-
-        // [START create_user_with_email]
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            hideLoginButton();
-
-                            FirebaseUser currentUser = mAuth.getCurrentUser();
-                            final User user = new User(currentUser.getUid(), username, currentUser.getEmail());
-                            final UserRepository userRepository = new UserRepository();
-                            userRepository.getCurrentUser(new UserListener() {
-                                @Override public void onStart() {}
-
-                                @Override
-                                public void onSuccess(DataSnapshot data) {
-                                    if (data.getValue() == null) {
-                                        userRepository.writeNewUser(user);
-                                    }
-                                }
-
-
-                                @Override public void onFailed(DatabaseError databaseError) {}
-                            });
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                });
-        // [END create_user_with_email]
+        fbLoginButton.setVisibility(View.VISIBLE);
+        mLoginButton.setVisibility(View.VISIBLE);
+        mSignUpButton.setVisibility(View.VISIBLE);
     }
 
     private void signIn(String email, String password) {
@@ -287,20 +264,6 @@ public class LoginActivity extends AppCompatActivity {
             valid = false;
         } else {
             mPasswordField.setError(null);
-        }
-
-        return valid;
-    }
-
-    private boolean validateUser() {
-        boolean valid = true;
-
-        String username = mUsernameField.getText().toString();
-        if (TextUtils.isEmpty(username)) {
-            mUsernameField.setError("Required.");
-            valid = false;
-        } else {
-            mUsernameField.setError(null);
         }
 
         return valid;
