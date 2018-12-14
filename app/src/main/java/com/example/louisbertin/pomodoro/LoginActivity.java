@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        fbLoginButton = findViewById(R.id.login_facebook);
+        fbLoginButton = findViewById(R.id.login_button);
         fbLoginButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -115,8 +115,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setLogin() {
-        mEmailField = findViewById(R.id.login_mail);
-        mPasswordField = findViewById(R.id.login_password);
+        mEmailField = findViewById(R.id.email);
+        mPasswordField = findViewById(R.id.password);
 
         mLoginButton = findViewById(R.id.login_button);
         mLoginButton.setOnClickListener(new View.OnClickListener() {
@@ -126,7 +126,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        mSignUpButton = findViewById(R.id.login_signup);
+        mSignUpButton = findViewById(R.id.email_register_button);
         mSignUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
