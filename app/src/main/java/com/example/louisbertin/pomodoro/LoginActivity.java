@@ -39,8 +39,9 @@ public class LoginActivity extends AppCompatActivity {
     Button logoutButton;
     CallbackManager mCallbackManager = CallbackManager.Factory.create();
 
-    private EditText mUsernameField, mEmailField, mPasswordField;
-    private Button registerButton, mLoginButton;
+    private EditText mEmailField;
+    private EditText mPasswordField;
+    private Button mSignUpButton, mLoginButton;
 
     private static final String TAG = "pwt";
 
@@ -55,35 +56,10 @@ public class LoginActivity extends AppCompatActivity {
         logoutButton = findViewById(R.id.logout_button);
         logoutButton.setVisibility(View.INVISIBLE);
         */
-
-        setFacebookLogin();
-
         setContentView(R.layout.activity_login);
 
-
-        // TODO: sign up
-        // mUsernameField = findViewById(R.id.username);
-        mEmailField = findViewById(R.id.login_mail);
-        mPasswordField = findViewById(R.id.login_password);
-        // TODO: sign up
-        // registerButton = findViewById(R.id.email_register_button);
-        mLoginButton = findViewById(R.id.login_button);
-        mLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
-            }
-        });
-
-        // TODO: sign up
-        /*
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createAccount(mUsernameField.getText().toString(), mEmailField.getText().toString(), mPasswordField.getText().toString());
-            }
-        });
-        */
+        setFacebookLogin();
+        setLogin();
     }
 
     @Override
@@ -97,6 +73,10 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+    }
 
     // sign out user on click
     public void signOut(View view) {
@@ -132,6 +112,27 @@ public class LoginActivity extends AppCompatActivity {
                 LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "email"));
             }
 
+        });
+    }
+
+    private void setLogin() {
+        mEmailField = findViewById(R.id.login_mail);
+        mPasswordField = findViewById(R.id.login_password);
+
+        mLoginButton = findViewById(R.id.login_button);
+        mLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
+            }
+        });
+
+        mSignUpButton = findViewById(R.id.login_signup);
+        mSignUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), SignupActivity.class));
+            }
         });
     }
 
@@ -191,7 +192,7 @@ public class LoginActivity extends AppCompatActivity {
         logoutButton.setVisibility(View.VISIBLE);
         fbLoginButton.setVisibility(View.INVISIBLE);
         mLoginButton.setVisibility(View.INVISIBLE);
-        registerButton.setVisibility(View.INVISIBLE);
+        mSignUpButton.setVisibility(View.INVISIBLE);
     }
 
     // hide login button
@@ -199,57 +200,7 @@ public class LoginActivity extends AppCompatActivity {
         logoutButton.setVisibility(View.INVISIBLE);
         fbLoginButton.setVisibility(View.VISIBLE);
         mLoginButton.setVisibility(View.VISIBLE);
-        registerButton.setVisibility(View.VISIBLE);
-    }
-
-    // TODO: sign up
-    private void createAccount(final String username, String email, String password) {
-        Log.d(TAG, "createAccount:" + email);
-        if (!validateForm() && !validateUser()) {
-            return;
-        }
-
-
-        // [START create_user_with_email]
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            hideLoginButton();
-
-                            FirebaseUser currentUser = mAuth.getCurrentUser();
-                            final User user = new User(currentUser.getUid(), username, currentUser.getEmail());
-                            final UserRepository userRepository = new UserRepository();
-                            userRepository.getCurrentUser(new UserListener() {
-                                @Override
-                                public void onStart() {
-                                }
-
-                                @Override
-                                public void onSuccess(DataSnapshot data) {
-                                    if (data.getValue() == null) {
-                                        userRepository.writeNewUser(user);
-                                    }
-                                }
-
-
-                                @Override
-                                public void onFailed(DatabaseError databaseError) {
-                                }
-                            });
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                });
-        // [END create_user_with_email]
+        mSignUpButton.setVisibility(View.VISIBLE);
     }
 
     private void signIn(String email, String password) {
@@ -314,20 +265,6 @@ public class LoginActivity extends AppCompatActivity {
             valid = false;
         } else {
             mPasswordField.setError(null);
-        }
-
-        return valid;
-    }
-
-    private boolean validateUser() {
-        boolean valid = true;
-
-        String username = mUsernameField.getText().toString();
-        if (TextUtils.isEmpty(username)) {
-            mUsernameField.setError("Required.");
-            valid = false;
-        } else {
-            mUsernameField.setError(null);
         }
 
         return valid;

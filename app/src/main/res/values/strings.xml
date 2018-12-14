@@ -88,8 +88,9 @@
         6. Every 4 cycle, take a longer break.
     </string>
 
-    <!-- Strings related to login -->
+    <!-- Login -->
     <string name="title_activity_login">Sign in</string>
+    <string name="prompt_username">username</string>
     <string name="prompt_email">mail</string>
     <string name="prompt_password">password</string>
     <string name="action_sign_in">Sign in or register</string>

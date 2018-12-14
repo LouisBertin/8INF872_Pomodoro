@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.louisbertin.pomodoro.entity.User;
@@ -18,6 +20,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.android.gms.common.oob.SignUp;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -33,10 +36,10 @@ import java.util.Arrays;
 public class SignupActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    private CallbackManager mCallbackManager;
 
-    private Button loginFacebookButton;
-    private Button mSignUpButton;
+    private EditText mUsernameField, mEmailField, mPasswordField;
+
+    private final String TAG = "signup";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,46 +47,26 @@ public class SignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
 
         mAuth = FirebaseAuth.getInstance();
-        mCallbackManager = CallbackManager.Factory.create();
 
-        setFacebookLogin();
+        // setFacebookLogin();
         setSignIn();
     }
 
-    private void setFacebookLogin() {
-        LoginManager.getInstance().registerCallback(mCallbackManager,
-                new FacebookCallback<LoginResult>() {
-                    private static final String TAG = "pwt";
+    private void setSignIn() {
+        mUsernameField = findViewById(R.id.signup_username);
+        mEmailField = findViewById(R.id.signup_mail);
+        mPasswordField = findViewById(R.id.signup_password);
 
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                        handleFacebookAccessToken(loginResult.getAccessToken());
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        Log.d(TAG, "facebook:onCancel");
-                    }
-
-                    @Override
-                    public void onError(FacebookException error) {
-                        Log.d(TAG, "facebook:onError", error);
-                    }
-                });
-
-        loginFacebookButton = findViewById(R.id.signup_button_facebook);
-        loginFacebookButton.setOnClickListener(new View.OnClickListener() {
+        Button mSignupButton = findViewById(R.id.signup_button);
+        mSignupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginManager.getInstance().logInWithReadPermissions(SignupActivity.this, Arrays.asList("email", "public_profile"));
+                createAccount(mUsernameField.getText().toString(), mEmailField.getText().toString(), mPasswordField.getText().toString());
             }
         });
-    }
 
-    private void setSignIn() {
-        mSignUpButton = findViewById(R.id.signup_login);
-        mSignUpButton.setOnClickListener(new View.OnClickListener() {
+        Button mLoginButton = findViewById(R.id.signup_login);
+        mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class));
@@ -91,20 +74,21 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
-    private void handleFacebookAccessToken(AccessToken token) {
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+    private void createAccount(final String username, String email, String password) {
+        Log.d(TAG, "createAccount:" + email);
+        if (!validateForm() && !validateUser()) return;
 
-        mAuth.signInWithCredential(credential)
+        mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d("pwt", "signInWithCredential:success");
+                            Log.d(TAG, "createUserWithEmail:success");
+                            // hideLoginButton();
 
-                            // insert user if he doesn't exist
                             FirebaseUser currentUser = mAuth.getCurrentUser();
-                            final User user = new User(currentUser.getUid(), currentUser.getDisplayName(), currentUser.getEmail());
+                            final User user = new User(currentUser.getUid(), username, currentUser.getEmail());
                             final UserRepository userRepository = new UserRepository();
                             userRepository.getCurrentUser(new UserListener() {
                                 @Override
@@ -118,19 +102,55 @@ public class SignupActivity extends AppCompatActivity {
                                     }
                                 }
 
+
                                 @Override
                                 public void onFailed(DatabaseError databaseError) {
                                 }
                             });
-
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w("pwt", "signInWithCredential:failure", task.getException());
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(SignupActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            //updateUI();
                         }
+
                     }
                 });
+    }
+
+    private boolean validateForm() {
+        boolean valid = true;
+
+        String email = mEmailField.getText().toString();
+        if (TextUtils.isEmpty(email)) {
+            mEmailField.setError("Required.");
+            valid = false;
+        } else {
+            mEmailField.setError(null);
+        }
+
+        String password = mPasswordField.getText().toString();
+        if (TextUtils.isEmpty(password)) {
+            mPasswordField.setError("Required.");
+            valid = false;
+        } else {
+            mPasswordField.setError(null);
+        }
+
+        return valid;
+    }
+
+    private boolean validateUser() {
+        boolean valid = true;
+
+        String username = mUsernameField.getText().toString();
+        if (TextUtils.isEmpty(username)) {
+            mUsernameField.setError("Required.");
+            valid = false;
+        } else {
+            mUsernameField.setError(null);
+        }
+
+        return valid;
     }
 }

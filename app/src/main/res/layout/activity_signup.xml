@@ -31,12 +31,29 @@
         android:textStyle="italic" />
 
     <android.support.v7.widget.AppCompatAutoCompleteTextView
-        android:id="@+id/signup_mail"
+        android:id="@+id/signup_username"
         android:layout_width="220dp"
         android:layout_height="20dp"
         android:layout_below="@+id/signup_text"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
+        android:background="#11000000"
+        android:drawableStart="@drawable/ic_account_circle_white"
+        android:drawablePadding="5dp"
+        android:ems="10"
+        android:hint="@string/prompt_username"
+        android:inputType="textPersonName"
+        android:textColor="@color/colorWhite"
+        android:textColorHint="@color/colorDarkGrey"
+        android:textSize="14sp" />
+
+    <android.support.v7.widget.AppCompatAutoCompleteTextView
+        android:id="@+id/signup_mail"
+        android:layout_width="220dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/signup_username"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
         android:background="#11000000"
         android:drawableStart="@drawable/ic_account_circle_white"
         android:drawablePadding="5dp"
@@ -91,17 +108,6 @@
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
-
-    <Button
-        android:id="@+id/signup_button_facebook"
-        android:layout_width="wrap_content"
-        android:layout_height="25dp"
-        android:layout_below="@+id/signup_button_cardview"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:background="@android:color/transparent"
-        android:text="Login with Facebook"
-        android:textColor="@color/colorBlueFacebook" />
 
     <Button
         android:id="@+id/signup_login"
