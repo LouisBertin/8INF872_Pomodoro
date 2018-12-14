@@ -26,6 +26,7 @@
     <!-- Tab 1 -->
     <string name="timer_button">0:00</string>
     <string name="timer_task">“Current task”</string>
+    <string name="timer_break">“Break time…”</string>
     <!-- \Tab 1 -->
 
     <string name="pref_header_theme">Theme</string>

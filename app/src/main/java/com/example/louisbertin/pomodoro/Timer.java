@@ -32,25 +32,32 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.example.louisbertin.pomodoro.MainActivity;
-import com.example.louisbertin.pomodoro.R;
-
 import java.util.Objects;
 
 public class Timer extends Fragment {
 
     private enum State {
         Running,
+        Break,
         Stopped
     }
 
     private final int ONE_SECOND = 1000;
+    private final int FIVE_MINUTES = 300000;
 
     private View rootView;
 
     // Current task
     private TextView currentTaskText;
     private String currentTask = "“Do your homework!”";
+
+    // Cycle
+    private State state;
+    private int cycleStreak;
+
+    // Time
+    private long initialTime;
+    private static long currentTime;
 
     private ImageView timerStartImage;
     @SuppressLint("StaticFieldLeak")
@@ -59,11 +66,7 @@ public class Timer extends Fragment {
     private static TextView timerSecondsText;
     private static CountDownTimer timer;
 
-    private boolean running;
-    private long initialTime;
-    private static long currentTime;
     private Switch soundSwitch;
-    private Uri alarmValue;
     private MediaPlayer mediaPlayer;
 
     protected NotificationCompat.Builder mBuilder;
@@ -105,15 +108,13 @@ public class Timer extends Fragment {
         changeButtonColor();
 
         // if app is quit with back button : don't kill everything
-        if (currentTime != 0) {
-            running = true;
-        }
+        state = currentTime != 0 ? State.Running : State.Stopped;
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putLong("time", currentTime);
-        outState.putBoolean("running", running);
+        outState.putSerializable("state", state);
     }
 
     @Override
@@ -122,12 +123,12 @@ public class Timer extends Fragment {
 
         if (savedInstanceState != null) {
             currentTime = savedInstanceState.getLong("time");
-            running = savedInstanceState.getBoolean("running");
+            state = (State) savedInstanceState.getSerializable("state");
         }
     }
 
     private void checkRunningState() {
-        if (!running) {
+        if (state != State.Running) {
             setNewTimer(initialTime);
             updateVisibility(State.Stopped);
         } else {
@@ -141,14 +142,23 @@ public class Timer extends Fragment {
     private long getTimeFromSettings() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         long index = Long.parseLong(sharedPreferences.getString("key_time_pom", "-1"));
-        return 300000 + 300000 * index;
+        return FIVE_MINUTES + FIVE_MINUTES * index;
     }
 
     private View.OnClickListener timeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!running) startTimer();
-            else stopTimer();
+            switch (state) {
+                case Running:
+                    stopTimer();
+                    break;
+                case Break:
+                    stopCycle();
+                    break;
+                case Stopped:
+                    startTimer();
+                    break;
+            }
         }
     };
 
@@ -168,6 +178,10 @@ public class Timer extends Fragment {
     }
 
     private void setNewTimer(long time) {
+        setNewTimer(time, State.Running);
+    }
+
+    private void setNewTimer(long time, final State s) {
         currentTime = time;
         timer = new CountDownTimer(time, ONE_SECOND) {
 
@@ -194,13 +208,23 @@ public class Timer extends Fragment {
             public void onFinish() {
                 ((MainActivity) Objects.requireNonNull(getActivity())).setSoundOn();
                 mediaPlayer.start();
-                stopRingtone();
+
+                switch (s) {
+                    case Running:
+                        state = State.Break;
+                        startBreakTime();
+                        break;
+                    case Break:
+                        state = State.Running;
+                        stopBreakTime();
+                        break;
+                }
             }
         };
     }
 
     public void startTimer() {
-        running = true;
+        state = State.Running;
 
         currentTaskText.setText(currentTask);
         updateVisibility(State.Running);
@@ -212,14 +236,42 @@ public class Timer extends Fragment {
     public void stopTimer() {
         AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
         alert.setTitle(R.string.title_cancel)
-                .setMessage(R.string.message_cancel)
+                .setMessage(getString(R.string.message_cancel) + cycleStreak + '.')
                 .setPositiveButton(R.string.button_yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        running = false;
-                        updateVisibility(State.Stopped);
+                        state = State.Stopped;
+                        updateVisibility(state);
                         timer.cancel();
                         setNewTimer(initialTime);
+                        cycleStreak = 0;
+
+                        // remove lock screen notification
+                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
+                        notificationManager.cancel(0);
+                    }
+                })
+                .setNegativeButton(R.string.button_no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    private void stopCycle() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        alert.setTitle(R.string.title_cancel_break)
+                .setMessage(getString(R.string.message_cancel_break) + cycleStreak + '.')
+                .setPositiveButton(R.string.button_yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        state = State.Stopped;
+                        updateVisibility(state);
+                        timer.cancel();
+                        setNewTimer(initialTime);
+                        cycleStreak = 0;
 
                         // remove lock screen notification
                         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
@@ -250,25 +302,57 @@ public class Timer extends Fragment {
         });
     }
 
-
     private void setRingtone() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         String alarmString = sharedPreferences.getString("key_pom_end_ringtone", "-1");
-        alarmValue = Uri.parse(alarmString);
+        Uri alarmValue = Uri.parse(alarmString);
         mediaPlayer = MediaPlayer.create(getContext(), alarmValue);
     }
 
-    public void stopRingtone() {
+    /*
+    * Envoie une notification à la fin d'un cycle.
+    * */
+    public void startBreakTime() {
         AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
         alert.setTitle(R.string.title_stop)
-                .setMessage(R.string.message_stop)
+                .setMessage(getString(R.string.message_stop) + ++cycleStreak + '.')
                 .setPositiveButton(R.string.button_stop, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mediaPlayer.stop();
-                        updateVisibility(State.Stopped);
-                        running = false;
+                        currentTaskText.setText(R.string.timer_break);
+                        setNewTimer(FIVE_MINUTES, state);
+                        timer.start();
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    /*
+    * Envoie une notification à la fin d'une pause de cycle.
+    * */
+    private void stopBreakTime() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        alert.setTitle("Your break is finished!")
+                .setMessage("Do you want to continue?")
+                .setPositiveButton("Let's go!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mediaPlayer.stop();
+                        currentTaskText.setText(currentTask);
+                        setNewTimer(initialTime, state);
+                        timer.start();
+                    }
+                })
+                .setNegativeButton("I'm done.", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mediaPlayer.stop();
+                        state = State.Stopped;
+                        updateVisibility(state);
                         setNewTimer(initialTime);
+                        cycleStreak = 0;
                     }
                 })
                 .create()
@@ -339,11 +423,11 @@ public class Timer extends Fragment {
     }
 
     private void changeButtonColor() {
-        SharedPreferences mSharedPreference= PreferenceManager.getDefaultSharedPreferences(getContext());
-        String color = mSharedPreference.getString("button_color", "008577" );
+        SharedPreferences mSharedPreference = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String color = mSharedPreference.getString("button_color", "008577");
         int colorInt = Color.parseColor("#" + color);
 
-        RelativeLayout Layout = (RelativeLayout) rootView.findViewById(R.id.timer_button);
+        RelativeLayout Layout = rootView.findViewById(R.id.timer_button);
         GradientDrawable shape = new GradientDrawable();
         shape.setShape(GradientDrawable.OVAL);
         shape.setColor(colorInt);

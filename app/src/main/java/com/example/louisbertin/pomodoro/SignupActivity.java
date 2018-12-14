@@ -14,24 +14,13 @@ import android.widget.Toast;
 import com.example.louisbertin.pomodoro.entity.User;
 import com.example.louisbertin.pomodoro.repository.UserListener;
 import com.example.louisbertin.pomodoro.repository.UserRepository;
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.google.android.gms.common.oob.SignUp;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-
-import java.util.Arrays;
 
 public class SignupActivity extends AppCompatActivity {
 

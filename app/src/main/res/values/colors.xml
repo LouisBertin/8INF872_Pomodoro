@@ -8,6 +8,9 @@
     <color name="colorUnselectedTab">#34000000</color>
     <color name="colorSettings">#fda085</color>
 
+    <!-- Timer Screen -->
+    <color name="colorTest">#AB9C7D</color>
+
     <!-- Login Screen -->
     <color name="colorDarkGrey">#8b8b8b</color>
     <color name="colorBlueFacebook">#0084FF</color>
