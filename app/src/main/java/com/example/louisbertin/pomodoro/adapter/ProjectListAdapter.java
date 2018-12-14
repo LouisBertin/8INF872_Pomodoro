@@ -3,6 +3,7 @@ package com.example.louisbertin.pomodoro.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -10,9 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.louisbertin.pomodoro.R;
+import com.example.louisbertin.pomodoro.TodoFragments.ProjectActivity;
 import com.example.louisbertin.pomodoro.TodoFragments.TodoFragment1;
 import com.example.louisbertin.pomodoro.entity.Project;
 import com.example.louisbertin.pomodoro.repository.ProjectRepository;
@@ -65,9 +68,15 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
         // fetch context
         mContext = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(mContext);
-
         // Inflate the custom layout
         View contactView = inflater.inflate(R.layout.projects_recyclerview, parent, false);
+        // display project
+        contactView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProject(v);
+            }
+        });
 
         // Return a new holder instance
         MyViewHolder viewHolder = new MyViewHolder(contactView);
@@ -79,6 +88,7 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Project project = (Project) mDataset.get(position);
         holder.projectName.setText(project.getTitle());
+        holder.projectName.setTag(project.getUuid());
         holder.projectDeleteButton.setTag(project.getUuid());
     }
 
@@ -118,5 +128,16 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
                     }
                 })
                 .show();
+    }
+
+    private void showProject(View v) {
+        RelativeLayout linearLayout =  (RelativeLayout) v;
+        TextView currentTextView = (TextView) linearLayout.getChildAt(0);
+        String projectId = currentTextView.getTag().toString();
+
+        // start project activity
+        Intent myIntent = new Intent(mContext, ProjectActivity.class);
+        myIntent.putExtra("projectId", projectId);
+        mContext.startActivity(myIntent);
     }
 }

@@ -1,10 +1,15 @@
 package com.example.louisbertin.pomodoro.repository;
 
+import android.support.annotation.NonNull;
+
 import com.example.louisbertin.pomodoro.entity.Project;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class ProjectRepository {
     private DatabaseReference mDatabase;
@@ -32,6 +37,19 @@ public class ProjectRepository {
     public void deleteProjectById(String id) {
         mDatabase.child("projects").child(id).removeValue();
         mDatabase.child("user_projects").child(currentUser.getUid()).child(id).removeValue();
+    }
+
+    public void getProjectById(String id) {
+        final DatabaseReference project = mDatabase.child("projects").child(id);
+        project.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // TODO : fetch project todos
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
     }
 
 }

@@ -84,6 +84,25 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.louisbertin.pomodoro.MainActivity" />
         </activity>
+        <activity
+            android:name=".TodoFragments.ProjectActivity"
+            android:parentActivityName=".TodoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/SettingsActionBarTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.louisbertin.pomodoro.TodoActivity" />
+        </activity>
+        <activity
+            android:name=".TodoFragments.AddTodosActivity"
+            android:parentActivityName=".TodoFragments.ProjectActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/SettingsActionBarTheme"
+            >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.louisbertin.pomodoro.TodoFragments.ProjectActivity" />
+        </activity>
     </application>
 
 </manifest>
