@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         /*
         logoutButton = findViewById(R.id.logout_button);
         logoutButton.setVisibility(View.INVISIBLE);
-        */
+*/
         setContentView(R.layout.activity_login);
 
         setFacebookLogin();
