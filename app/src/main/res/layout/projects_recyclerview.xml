@@ -22,6 +22,7 @@
         android:background="@android:color/holo_red_light"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
+        android:textColor="@color/colorWhite"
         android:text="Supprimer"
         android:textSize="10sp" />
 </RelativeLayout>
