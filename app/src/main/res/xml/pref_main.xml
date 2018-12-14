@@ -19,15 +19,6 @@
             android:summary="@string/summary_time_pom"
             android:title="@string/title_time_pom" />
 
-        <ListPreference
-            android:defaultValue="2"
-            android:dialogTitle="@string/title_cycle_pom"
-            android:entries="@array/pref_pomodoro_cycle_entries"
-            android:entryValues="@array/pref_pomodoro_cycle_values"
-            android:key="@string/key_pomodoro_cycle"
-            android:summary="@string/summary_cycle_pom"
-            android:title="@string/title_cycle_pom" />
-
         <RingtonePreference
             android:defaultValue="content://settings/system/alarm_alert"
             android:key="@string/key_pom_end_ringtone"
