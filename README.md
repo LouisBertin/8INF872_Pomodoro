@@ -36,18 +36,16 @@ Une application réalisée dans le cadre du cours de développement mobile de l'
 
 ## Screenshots
 
-![Splash Screen](screenshots/splash_screen.png)
+<img src="screenshots/splash_screen.png" alt="splash screen" width="400"/>
 
-![Splash Screen](screenshots/home.png)
+<img src="screenshots/home.png" alt="home" width="400"/>
 
-![Splash Screen](screenshots/countdown_start.png)
+<img src="screenshots/countdown_start.png" alt="countdown start" width="400"/>
 
-![Splash Screen](screenshots/notification.png)
+<img src="screenshots/notification.png" alt="notification" width="400"/>
 
-![Splash Screen](screenshots/notification.png)
+<img src="screenshots/menu.png" alt="menu" width="400"/>
 
-![Splash Screen](screenshots/menu.png)
+<img src="screenshots/login.png" alt="login" width="400"/>
 
-![Splash Screen](screenshots/login.png)
-
-![Splash Screen](screenshots/settings.png)
+<img src="screenshots/settings.png" alt="settings" width="400"/>
